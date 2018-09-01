@@ -15,4 +15,6 @@ Rails.application.routes.draw do
     put 'set_keytech_demo_server' => :set_keytech_demo_server
   end
 
+  resource :user
+
 end

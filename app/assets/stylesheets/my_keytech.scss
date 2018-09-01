@@ -1,0 +1,14 @@
+.my_keytech {
+  max-height: calc(100vh - 9rem);
+  overflow-y: auto;
+
+  ul {
+  padding-left: .25rem ;
+  }
+  li {
+    display: block;
+    padding: .5rem 0 0 0 ;
+    font-size: 80%;
+    color: rgba(0,0,0,.65);
+  }
+}

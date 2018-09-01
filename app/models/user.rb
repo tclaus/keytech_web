@@ -1,3 +1,4 @@
+
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -19,6 +20,19 @@ class User < ApplicationRecord
      self.keytech_url ||= 'https://demo.keytech.de'# TODO: Use Environment
      self.keytech_username ||= 'jgrant'# TODO: Use Environment
      self.keytech_password ||= ''# TODO: Use Environment
+   end
+
+   # returns current keytech kit object
+   def keytechKit
+      KeytechKit::Keytech_Kit.new(self.keytech_url, self.keytech_username, keytech_password)
+   end
+
+   def favorites
+     keytechKit.currentUser.favorites
+   end
+
+   def queries
+     keytechKit.currentUser.queries
    end
 
 end

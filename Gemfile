@@ -40,6 +40,9 @@ gem 'devise'
 # Non Blocking Notifications
 gem 'toastr-rails'
 
+gem 'keytechkit', :path => '/Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem'
+
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
