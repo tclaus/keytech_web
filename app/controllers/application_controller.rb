@@ -9,6 +9,11 @@ class ApplicationController < ActionController::Base
       @queries = current_user.queries
       # last used items?
 
+      # If url is like /<elementkey> - then show element details
+      # If  url is like /search?query=123&params..  => Show query-results (in modal screen? )
+      #
+
+
       # load in another controller?
       render 'home'
     else

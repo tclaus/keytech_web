@@ -35,4 +35,8 @@ class User < ApplicationRecord
      keytechKit.currentUser.queries
    end
 
+   def findElement(id)
+     keytechKit.elements.find
+   end
+
 end

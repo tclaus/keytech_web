@@ -1,1 +1,6 @@
-Main
+
+<% if !@element.blank? %>
+  <%= @element.displayname %>
+<% else %>
+  No element !
+<% end %>

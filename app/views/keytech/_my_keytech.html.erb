@@ -5,7 +5,7 @@
       <% @favorites.each do |fav| %>
         <% if !fav.targetElementKey.blank? %>
         <li>
-          <%= link_to fav.entryName,'#' %>
+          <%= link_to fav.entryName, element_path(id: fav.targetElementKey) %>
         </li>
         <% end %>
       <% end %>
