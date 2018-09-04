@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-md-3">
+    <%= image_tag thumbnail_element_path, class: "thumbnail" %>
+  </div>
+  <div class="col-md-9">
+    <table class="table table-sm">
+    <tbody>
+      <% @layout.controls.each do |control| %>
+        <% if control.controlType != "LABEL" %>
+          <tr>
+            <td>
+              <%=  control.displayname %>
+            </td>
+            <td>
+              <%= @element.keyValueList[control.attributeName] %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+  </div>
+</div>

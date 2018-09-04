@@ -8,24 +8,16 @@ class ElementsController < ApplicationController
   end
 
   # Show single Element
-  def show
-    logger.info "Show one element (get by id):  #{params[:id]}"
+  def show_editor
     load_element
-    puts "Loaded element: #{@element}"
-
     # redirect to a view
     if user_signed_in?
       # Add favorites and qieries
-      @favorites = current_user.favorites
-      @queries = current_user.queries
-
+      load_my_keytech
+      load_element_tabs
       @layout = keytechKit.layouts.main_layout(
         classkey(@element.key)
       )
-
-      # Load tabs for element
-      # TODO: Caching, changes only very slowly
-      @subareas = keytechKit.classes.classDefinition(classkey(@element.key)).availableSubareas
       # load in another controller?
       render 'application/home'
     else
@@ -33,6 +25,25 @@ class ElementsController < ApplicationController
       render 'application/landing_page'
     end
 
+  end
+
+  def show_links
+    load_element
+
+    # redirect to a view
+    if user_signed_in?
+      # Add favorites and qieries
+      load_my_keytech
+      load_element_tabs
+
+      # load structure
+
+      # load in another controller?
+      render 'application/home'
+    else
+      # 404 not found?
+      render 'application/landing_page'
+    end
   end
 
   def thumbnail
@@ -48,6 +59,15 @@ class ElementsController < ApplicationController
   end
 
   private
+
+  def load_my_keytech
+    @favorites = current_user.favorites
+    @queries = current_user.queries
+  end
+
+  def load_element_tabs
+    @subareas = keytechKit.classes.classDefinition(classkey(@element.key)).availableSubareas
+  end
 
   def classkey(elementKey)
     elementKey.split(':').first
