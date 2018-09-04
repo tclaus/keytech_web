@@ -16,6 +16,19 @@ Rails.application.routes.draw do
   end
 
   resource :user
-  resource :element
+
+  # Element Tabs, need to match with tabs provided by keytech API
+  get 'element/:id', to: 'elements#show', as: 'edit_element'
+  get 'element/:id/editor', to: 'elements#show'
+  get 'element/:id/links', to: 'elements#show'
+  get 'element/:id/whereused', to: 'elements#show'
+  get 'element/:id/notes', to: 'elements#show'
+  get 'element/:id/files', to: 'elements#show'
+  get 'element/:id/status', to: 'elements#show'
+  get 'element/:id/messages', to: 'elements#show'
+  get 'element/:id/files', to: 'elements#show'
+
+  get 'element/:id/preview', to: 'elements#preview', as: 'preview_element'
+  get 'element/:id/thumbnail', to: 'elements#thumbnail', as: 'thumbnail_element'
 
 end

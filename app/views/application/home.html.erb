@@ -3,6 +3,10 @@
     <%= render 'keytech/my_keytech' %>
   </div>
   <div class="col-lg-9">
-    <%= render 'keytech/main_keytech' %>
+    <% if !@element.blank? %>
+      <%= render 'keytech/main_keytech' %>
+    <% else %>
+     No Element !
+    <% end %>
   </div>
 </div>

@@ -25,6 +25,7 @@ class UsersController < ApplicationController
   end
 
   def update_keytech_settings
+    puts "Update settings #{params}"
     current_user.update_attributes(keytech_params)
 
     redirect_to keytech_settings_path, notice: 'Saved...'
@@ -54,7 +55,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def keytech_params
-        params.require(:user).permit(:keytech_website, :keytech_username, :keytech_password)
+        params.require(:user).permit(:keytech_url, :keytech_username, :keytech_password)
     end
 
     def user_params

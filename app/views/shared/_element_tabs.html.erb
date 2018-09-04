@@ -1,0 +1,16 @@
+
+
+<ul class="nav nav-tabs">
+  <% currentPath = request.url.split('/').last %>
+  <% @subareas.each do |area| %>
+    <li class="nav-item">
+      <% if area.key.downcase == currentPath %>
+      <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link active" %>
+      <% else %>
+      <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link" %>
+      <% end %>
+
+    </li>
+  <% end %>
+
+</ul>
