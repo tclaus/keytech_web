@@ -1,1 +1,25 @@
-Links
+<div class="table-responsive-lg">
+  <table class="table table-striped table-hover table-sm">
+    <thead>
+      <tr>
+        <% @layout.controls.each do |control| %>
+          <th scope="col"><%= control.displayname %></th>
+        <% end %>
+      </tr>
+    </thead>
+  <tbody>
+
+    <% @elements.each do |element| %>
+        <tr>
+          <% @layout.controls.each do |control| %>
+          <td>
+            <%= link_to show_element_path(element.key) do %>
+              <%= valueParser(element.keyValueList[control.attributeName]) %>
+            <% end %>
+          </td>
+          <% end %>
+        </tr>
+      <% end %>
+  </tbody>
+  </table>
+</div>

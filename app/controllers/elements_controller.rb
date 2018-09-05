@@ -9,10 +9,10 @@ class ElementsController < ApplicationController
 
   # Show single Element
   def show_editor
-    load_element
     # redirect to a view
     if user_signed_in?
-      # Add favorites and qieries
+
+      load_element
       load_my_keytech
       load_element_tabs
       @layout = keytechKit.layouts.main_layout(
@@ -28,16 +28,18 @@ class ElementsController < ApplicationController
   end
 
   def show_links
-    load_element
 
     # redirect to a view
     if user_signed_in?
       # Add favorites and qieries
+      @element = keytechKit.elements.find(params[:id], {"attributes":"all"})
       load_my_keytech
       load_element_tabs
+      @layout = keytechKit.layouts.lister_layout(
+        classkey(@element.key)
+      )
 
-      # load structure
-
+      @elements = keytechKit.elements.structure(params[:id], {"attributes":"all"})
       # load in another controller?
       render 'application/home'
     else

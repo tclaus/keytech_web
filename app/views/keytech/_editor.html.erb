@@ -12,7 +12,7 @@
               <%=  control.displayname %>
             </td>
             <td>
-              <%= @element.keyValueList[control.attributeName] %>
+              <%= valueParser(@element.keyValueList[control.attributeName]) %>
             </td>
           </tr>
         <% end %>
