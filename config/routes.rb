@@ -30,6 +30,7 @@ Rails.application.routes.draw do
 
   get 'element/:id/preview', to: 'elements#preview', as: 'preview_element'
   get 'element/:id/thumbnail', to: 'elements#thumbnail', as: 'thumbnail_element'
+  get 'element/:id/masterfile', to: 'elements#masterfile', as: 'masterfile_element'
 
   get 'element/:id', to: redirect('element/%{id}/editor'), as: 'show_element'
 

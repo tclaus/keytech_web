@@ -82,6 +82,12 @@ class ElementsController < ApplicationController
 
   end
 
+  def masterfile
+    # Load masterfile from elementID
+    masterfilename = keytechKit.files.masterfilename(params[:id])
+    files = keytechKit.files.loadMasterfile(params[:id])
+    send_data files, type: files.content_type, disposition: 'attachment', filename: masterfilename
+  end
 
   def thumbnail
     #TODO: Caching of images
@@ -120,6 +126,7 @@ class ElementsController < ApplicationController
 
   def load_element_tabs
     @subareas = keytechKit.classes.load(classkey(@element.key)).availableSubareas
+    @hasMasterfile = keytechKit.files.hasMasterfile(@element.key)
   end
 
   def classkey(elementKey)

@@ -5,11 +5,21 @@
   <% @subareas.each do |area| %>
     <li class="nav-item">
       <% if area.key.downcase == currentPath %>
-      <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link active" %>
+        <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link active" %>
       <% else %>
-      <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link" %>
+        <% # Create a download - button if fil exist %>
+        <% if area.key.downcase != "files" %>
+          <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link" %>
+        <% end %>
       <% end %>
-
+    </li>
+  <% end %>
+  <% if @hasMasterfile %>
+    <li>
+      <%= link_to masterfile_element_path do %>
+        Download
+        <i class="fas fa-file-download fa-2x"></i>
+      <% end %>
     </li>
   <% end %>
 
