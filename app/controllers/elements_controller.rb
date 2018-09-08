@@ -27,26 +27,44 @@ class ElementsController < ApplicationController
 
   end
 
+  # Show structured Links
   def show_links
 
     # redirect to a view
     if user_signed_in?
       # Add favorites and qieries
-      @element = keytechKit.elements.find(params[:id], {"attributes":"all"})
+      load_element("none")
       load_my_keytech
       load_element_tabs
-      @layout = keytechKit.layouts.lister_layout(
-        classkey(@element.key)
-      )
-
+      @layout = keytechKit.layouts.global_lister_layout
       @elements = keytechKit.elements.structure(params[:id], {"attributes":"all"})
-      # load in another controller?
+      simplifyKeyValueList(@elements)
+
       render 'application/home'
     else
       # 404 not found?
       render 'application/landing_page'
     end
   end
+
+  def show_whereused
+    # redirect to a view
+    if user_signed_in?
+      # Add favorites and qieries
+      load_element("none")
+      load_my_keytech
+      load_element_tabs
+      @layout = keytechKit.layouts.global_lister_layout
+      @elements = keytechKit.elements.whereused(params[:id], {"attributes":"all"})
+      simplifyKeyValueList(@elements)
+
+      render 'application/home'
+    else
+      # 404 not found?
+      render 'application/landing_page'
+    end
+  end
+
 
   def thumbnail
     #TODO: Caching of images
@@ -61,6 +79,22 @@ class ElementsController < ApplicationController
   end
 
   private
+
+  # Removes the prefix as_do__,  as_sdo__ .. from keys in keyValueList.
+  def simplifyKeyValueList(elements)
+    # remove everything till the double unerline
+    elements.each do |element|
+      element.keyValueList.transform_keys! do |key|
+          index = key.index('__')
+          if index != nil
+            key.slice(index + 2,key.length)
+          else
+            key
+          end
+      end
+
+    end
+  end
 
   def load_my_keytech
     @favorites = current_user.favorites
@@ -79,9 +113,9 @@ class ElementsController < ApplicationController
     current_user.keytechKit
   end
 
-  def load_element
+  def load_element(attributes = "all")
     # Load element from API, or cache
-    @element = keytechKit.elements.find(params[:id], {"attributes":"all"})
+    @element = keytechKit.elements.find(params[:id], {"attributes":attributes})
   end
 
 end

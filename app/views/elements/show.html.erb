@@ -1,1 +1,5 @@
-<%= @element.displayname %>
+<% if !@element.blank? %>
+  <%= @element.displayname %>
+<% else %>
+  Kein Element gefunden
+<% end %>

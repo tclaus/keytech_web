@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 <div>
-  <span class="small"> <%= current_user.keytech_url %> </span> <br>
+  <% if user_signed_in? %>
+    <span class="small"> <%= current_user.keytech_url %> </span> <br>
+  <% end %>
   <a class="navbar-brand" href="#">keytech Web</a>
 
 </div>
