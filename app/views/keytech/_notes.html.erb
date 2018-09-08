@@ -1,0 +1,27 @@
+
+<% if @notes.empty? %>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"></h5>
+      <h6 class="card-subtitle mb-2 text-muted"></h6>
+      <h6 class="card-subtitle mb-2 text-muted"></h6>
+      <p class="card-text">
+        Keine Noizen
+      </p>
+    </div>
+</div>
+<% end %>
+
+<% @notes.each do |note| %>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><%= note.subject %></h5>
+      <h6 class="card-subtitle mb-2 text-muted"><%= parseValue(note.createdAt) %></h6>
+      <h6 class="card-subtitle mb-2 text-muted"><%= note.createdByLong %></h6>
+      <p class="card-text">
+        <%= note.text %>
+      </p>
+    </div>
+  </div>
+  <hr>
+<% end %>

@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   get 'element/:id/editor', to: 'elements#show_editor'
   get 'element/:id/links', to: 'elements#show_links'
   get 'element/:id/whereused', to: 'elements#show_whereused'
-  get 'element/:id/notes', to: 'elements#show'
+  get 'element/:id/notes', to: 'elements#show_notes'
   get 'element/:id/files', to: 'elements#show'
   get 'element/:id/status', to: 'elements#show'
   get 'element/:id/messages', to: 'elements#show'

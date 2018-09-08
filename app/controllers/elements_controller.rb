@@ -65,6 +65,23 @@ class ElementsController < ApplicationController
     end
   end
 
+  def show_notes
+    # redirect to a view
+    if user_signed_in?
+
+      load_element("none")
+      load_my_keytech
+      load_element_tabs
+      @notes = keytechKit.notes.load(@element.key)
+      # load in another controller?
+      render 'application/home'
+    else
+      # 404 not found?
+      render 'application/landing_page'
+    end
+
+  end
+
 
   def thumbnail
     #TODO: Caching of images
@@ -102,7 +119,7 @@ class ElementsController < ApplicationController
   end
 
   def load_element_tabs
-    @subareas = keytechKit.classes.classDefinition(classkey(@element.key)).availableSubareas
+    @subareas = keytechKit.classes.load(classkey(@element.key)).availableSubareas
   end
 
   def classkey(elementKey)
@@ -115,7 +132,7 @@ class ElementsController < ApplicationController
 
   def load_element(attributes = "all")
     # Load element from API, or cache
-    @element = keytechKit.elements.find(params[:id], {"attributes":attributes})
+    @element = keytechKit.elements.load(params[:id], {"attributes":attributes})
   end
 
 end
