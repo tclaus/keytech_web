@@ -1,5 +1,12 @@
+
 module ElementsHelper
 
+
+  def displayNameForClass(classKey)
+    # Cache for classkey
+    classDefinition = current_user.keytechKit.classes.load(classKey)
+    classDefinition.displayname
+  end
 
   # Translates a elementkey MISC_FILE:123 to a classkey: MISC_FILE
   def classkey(elementKey)

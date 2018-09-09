@@ -82,6 +82,22 @@ class ElementsController < ApplicationController
 
   end
 
+  def search
+    if user_signed_in?
+
+      @layout = keytechKit.layouts.global_lister_layout
+      options = {groupBy:"classkey", classes: params[:classes]}
+      @searchResponseHeader = find_element_by_search(params[:q], options)
+      @elements = @searchResponseHeader.elementList
+
+      # load in another controller?
+      render 'keytech/_search_results'
+    else
+      # 404 not found?
+      render 'application/landing_page'
+    end
+  end
+
   def masterfile
     # Load masterfile from elementID
     masterfilename = keytechKit.files.masterfilename(params[:id])
@@ -125,6 +141,7 @@ class ElementsController < ApplicationController
   end
 
   def load_element_tabs
+    # Cache subareas for elementkey
     @subareas = keytechKit.classes.load(classkey(@element.key)).availableSubareas
     @hasMasterfile = keytechKit.files.hasMasterfile(@element.key)
   end
@@ -135,6 +152,11 @@ class ElementsController < ApplicationController
 
   def keytechKit
     current_user.keytechKit
+  end
+
+  def find_element_by_search(searchText, options)
+    # Fake masses of elements?
+     keytechKit.search.query(searchText,options)
   end
 
   def load_element(attributes = "all")
