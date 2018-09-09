@@ -1,7 +1,7 @@
 PATH
   remote: /Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem
   specs:
-    keytechkit (0.2.0)
+    keytechkit (0.3.0)
       httparty (~> 0.16)
 
 GEM
