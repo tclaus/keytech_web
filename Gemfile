@@ -23,6 +23,7 @@ gem 'jquery-rails'
 
 gem 'font-awesome-sass', '~> 5.3.1'
 
+gem 'dotenv-rails', groups: [:development, :test]
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
