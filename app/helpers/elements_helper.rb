@@ -4,6 +4,9 @@ module ElementsHelper
 
   def displayNameForClass(classKey)
     # Cache for classkey
+    if classKey.downcase == "default_mi"
+      return "Artikel" #todo translate
+    end
     classDefinition = current_user.keytechKit.classes.load(classKey)
     classDefinition.displayname
   end
