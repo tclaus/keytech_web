@@ -1,3 +1,4 @@
+
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
@@ -5,18 +6,18 @@ class ApplicationController < ActionController::Base
   def home
 
     if user_signed_in?
-      @favorites = current_user.favorites
-      @queries = current_user.queries
-      # last used items?
 
-      # If url is like /<elementkey> - then show element details
-      # If  url is like /search?query=123&params..  => Show query-results (in modal screen? )
-      #
+      if (current_user.hasValidConnection)
+        @favorites = current_user.favorites
+        @queries = current_user.queries
 
-
-      # load in another controller?
-      render 'home'
+        render 'home'
+      else
+        render 'invalid_login'
+      end
     else
+
+      # User is not signed in in platform
       render 'landing_page'
     end
   end

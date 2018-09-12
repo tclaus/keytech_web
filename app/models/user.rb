@@ -6,7 +6,12 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :confirmable, :trackable
 
  before_save { self.email = email.downcase }
- before_save :default_values
+ before_create :default_values
+
+ before_save :encryptValues
+ after_save :decryptValues
+ after_initialize :decryptValues
+
  validates :name,  presence: false, length: { maximum: 50 }
 
  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -16,15 +21,18 @@ class User < ApplicationRecord
 
 
    def default_values
-     # TODO: Crypt username / password
-     self.keytech_url ||= 'https://demo.keytech.de'# TODO: Use Environment
-     self.keytech_username ||= 'jgrant'# TODO: Use Environment
-     self.keytech_password ||= ''# TODO: Use Environment
+     self.keytech_url ||= 'https://demo.keytech.de' # TODO: Use Environment
+     self.keytech_username ||= 'jgrant' # TODO: Use Environment
+     self.keytech_password ||= '' # TODO: Use Environment
    end
 
-   # returns current keytech kit object
-   def keytechKit
-      KeytechKit::Keytech_Kit.new(self.keytech_url, self.keytech_username, keytech_password)
+   def hasValidConnection
+     begin
+       return !keytechKit.currentUser.blank?
+     rescue Exception => exc
+       logger.error("Invalid keytech credentials or server not found #{exc.message}")
+       return false
+     end
    end
 
    def favorites
@@ -33,6 +41,64 @@ class User < ApplicationRecord
 
    def queries
      keytechKit.currentUser.queries
+   end
+
+   # returns current keytech kit object
+   def keytechKit
+      KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
+   end
+
+private
+    def encryptValues
+      self.keytech_url = encrypt(self.keytech_url)
+      self.keytech_username = encrypt(self.keytech_username)
+      self.keytech_password = encrypt(self.keytech_password)
+    end
+
+    def decryptValues
+      self.keytech_url = decrypt(self.keytech_url)
+      self.keytech_username = decrypt(self.keytech_username)
+      self.keytech_password = decrypt(self.keytech_password)
+    end
+
+   # See https://medium.com/@MirMayne/a-simple-way-to-encrypt-and-decrypt-in-rails-5-9a514645d066
+   def encrypt(value)
+     begin
+       value = value || ""
+       len = ActiveSupport::MessageEncryptor.key_len
+       password = ENV['crypted_password']
+
+       key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt,len)
+       crypt = ActiveSupport::MessageEncryptor.new(key)
+       encrypted_data = crypt.encrypt_and_sign(value)
+       return encrypted_data
+     rescue Exception => exc
+       logger.error("Can not encrypt value #{exc.message}")
+       return ""
+     end
+   end
+
+   def decrypt(value)
+     begin
+       value = value || ""
+       len   = ActiveSupport::MessageEncryptor.key_len
+       password = ENV['crypted_password']
+       key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt,len)
+       crypt = ActiveSupport::MessageEncryptor.new(key)
+       decrypted_data = crypt.decrypt_and_verify(value)
+       return decrypted_data
+     rescue Exception => exc
+       logger.error("Can not decrpyt value #{exc.message}")
+       return ""
+     end
+   end
+
+   def getSalt
+     if self.salt.blank?
+       len = ActiveSupport::MessageEncryptor.key_len
+       self.salt = Base64.encode64(SecureRandom.random_bytes(len))
+     end
+     Base64.decode64(self.salt)
    end
 
 

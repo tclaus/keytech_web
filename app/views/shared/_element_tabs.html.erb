@@ -7,7 +7,7 @@
       <% if area.key.downcase == currentPath %>
         <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link active" %>
       <% else %>
-        <% # Create a download - button if fil exist %>
+        <% # Create a download - button if file exist %>
         <% if area.key.downcase != "files" %>
           <%= link_to area.displayname, "/element/#{@element.key}/#{area.key.downcase}", class: "nav-link" %>
         <% end %>

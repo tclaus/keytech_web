@@ -4,7 +4,7 @@
   </div>
   <div class="col-md-6">
 
-    <h2>keytech web-API Settings</h2>
+    <h2>keytech web-API Einstellungen</h2>
     <hr>
     <%= form_for current_user, url: update_keytech_settings_path, html: { method: :put } do |f| %>
 
@@ -15,17 +15,18 @@
 
     <div class="field">
       <%= f.label :keytech_username, class: "sr-only" %><br/>
-      <%= f.text_field :keytech_username, autocomplete: "username", placeholder: "keytech username", class:"form-control" %>
+      <%= f.text_field :keytech_username, autocomplete: "username", placeholder: "keytech Benutzername", class:"form-control" %>
     </div>
 
     <div class="field">
       <%= f.label :keytech_password, class: "sr-only" %>
       <i>(Passwords are secure stored crypted)</i><br/>
-      <%= f.password_field :keytech_password, autocomplete: "password",placeholder:"keytech password", class:"form-control" %>
+      <%= f.password_field :keytech_password, autocomplete: "password",placeholder:"keytech Passwort", class:"form-control" %>
     </div>
     <%= link_to 'Use keytech demo server',set_keytech_demo_server_path , method: :put%>
-    <span>Use public keytech demo server</span>
+    <span>Öffentlichen Demo Server benutzen</span>
 
+<% # TODO: Fill in Demo Server credentials %>
     <span>Test</span>
 
     <div class="actions">

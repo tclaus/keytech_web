@@ -2,6 +2,17 @@
   <div class="list-group-item list-group-item-secondary">
     Personal Settings
   </div>
+
+  <% currentPath = request.url.split('/').last %>
+
+  <% if edit_user_registration_path.end_with? currentPath %>
+    <%= link_to 'Account', edit_user_registration_path, class:"list-group-item list-group-item-action active" %>
+  <% else %>
   <%= link_to 'Account', edit_user_registration_path, class:"list-group-item list-group-item-action" %>
-  <%= link_to 'keytech Einstellungen', keytech_settings_path, class:"list-group-item list-group-item-action" %>
+  <% end %>
+  <% if keytech_settings_path.end_with? currentPath %>
+    <%= link_to 'keytech Einstellungen', keytech_settings_path, class:"list-group-item list-group-item-action active" %>
+  <% else %>
+    <%= link_to 'keytech Einstellungen', keytech_settings_path, class:"list-group-item list-group-item-action" %>
+  <% end %>
 </div>

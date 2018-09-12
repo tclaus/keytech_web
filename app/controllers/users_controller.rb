@@ -32,9 +32,9 @@ class UsersController < ApplicationController
   end
 
   def set_keytech_demo_server
-    current_user.keytech_url = "https://demo.keytech.de" #todo: use environment
-    current_user.keytech_username = "jgrant"
-    current_user.keytech_password = ""
+    current_user.cryptedKeytechUrl("https://demo.keytech.de") #todo: use environment
+    current_user.cryptedKeytechUser("jgrant")
+    current_user.cryptedKeytechPassword("")
     current_user.save
 
     redirect_to keytech_settings_path
@@ -51,7 +51,6 @@ class UsersController < ApplicationController
   end
 
   private
-
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def keytech_params
