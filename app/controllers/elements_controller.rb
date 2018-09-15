@@ -24,7 +24,6 @@ class ElementsController < ApplicationController
       # 404 not found?
       render 'application/landing_page'
     end
-
   end
 
   # Show structured Links
@@ -36,7 +35,8 @@ class ElementsController < ApplicationController
       load_element("none")
       load_my_keytech
       load_element_tabs
-      @layout = keytechKit.layouts.global_lister_layout
+      load_lister_layout
+
       @elements = keytechKit.elements.structure(params[:id], {"attributes":"all"})
       simplifyKeyValueList(@elements)
 
@@ -54,7 +54,8 @@ class ElementsController < ApplicationController
       load_element("none")
       load_my_keytech
       load_element_tabs
-      @layout = keytechKit.layouts.global_lister_layout
+      load_lister_layout
+
       @elements = keytechKit.elements.whereused(params[:id], {"attributes":"all"})
       simplifyKeyValueList(@elements)
 
@@ -79,7 +80,14 @@ class ElementsController < ApplicationController
       # 404 not found?
       render 'application/landing_page'
     end
+  end
 
+  def show_status
+    load_element("none")
+    load_my_keytech
+    load_element_tabs
+
+    render 'application/home'
   end
 
   def search
@@ -106,14 +114,14 @@ class ElementsController < ApplicationController
   end
 
   def thumbnail
-    #TODO: Caching of images
-    image = keytechKit.elements.thumbnail(params[:id])
+    elementKey = params[:id]
+    image = keytechKit.elements.thumbnail(elementKey)
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def preview
-    #TODO: Caching of images
-    image = keytechKit.elements.preview(params[:id])
+    elementKey = params[:id]
+    image = keytechKit.elements.preview(elementKey)
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
@@ -140,10 +148,21 @@ class ElementsController < ApplicationController
     @queries = current_user.queries
   end
 
+  def load_lister_layout
+    @layout = Rails.cache.fetch("global_lister_layout", expires_in: 12.hours) do
+      keytechKit.layouts.global_lister_layout
+    end
+  end
+
   def load_element_tabs
-    # Cache subareas for elementkey
-    @subareas = keytechKit.classes.load(classkey(@element.key)).availableSubareas
+    @subareas = Rails.cache.fetch("#{@element.key}/subareas", expires_in: 12.hours) do
+        @subareas = keytechKit.classes.load(classkey(@element.key)).availableSubareas
+    end
+
     @hasMasterfile = keytechKit.files.hasMasterfile(@element.key)
+    if @hasMasterfile == true
+      @masterfileInfo = keytechKit.files.masterfileInfo(@element.key)
+    end
   end
 
   def classkey(elementKey)
@@ -160,7 +179,6 @@ class ElementsController < ApplicationController
   end
 
   def load_element(attributes = "all")
-    # Load element from API, or cache
     @element = keytechKit.elements.load(params[:id], {"attributes":attributes})
   end
 

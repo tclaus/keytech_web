@@ -1,6 +1,14 @@
 <div class="row">
   <div class="col-md-3">
     <%= image_tag preview_element_path, class: "thumbnail" %>
+    <% if @hasMasterfile %>
+      <%= link_to masterfile_element_path do %>
+        <div class="masterfile_name"> <%= @masterfileInfo.fileName %></div>
+        <div class="secondary_fileInfo">
+          <%= number_to_human_size(@masterfileInfo.fileSize) %>
+        </div>
+      <% end %>
+    <% end %>
   </div>
   <div class="col-md-9">
     <table class="table table-sm">

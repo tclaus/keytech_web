@@ -1,14 +1,15 @@
 
 module ElementsHelper
 
-
   def displayNameForClass(classKey)
-    # Cache for classkey
     if classKey.downcase == "default_mi"
       return "Artikel" #todo translate
     end
-    classDefinition = current_user.keytechKit.classes.load(classKey)
-    classDefinition.displayname
+
+    Rails.cache.fetch("#{classKey}/displayname", expires_in: 12.hours) do
+      classDefinition = current_user.keytechKit.classes.load(classKey)
+      classDefinition.displayname
+    end
   end
 
   # Translates a elementkey MISC_FILE:123 to a classkey: MISC_FILE
