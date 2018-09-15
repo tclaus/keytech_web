@@ -45,6 +45,7 @@ class User < ApplicationRecord
 
    # returns current keytech kit object
    def keytechKit
+     logger.info "Create keytechkit object with: #{keytech_url}, #{keytech_username}, #{keytech_password}"
       KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
    end
 
@@ -65,7 +66,7 @@ private
    def encrypt(value)
      begin
        value = value || ""
-       puts "Encrypt: #{value}"
+       logger.debug "Encrypt: #{value}"
        len = ActiveSupport::MessageEncryptor.key_len
        password = ENV['CRYPTED_PASSWORD']
 
@@ -82,8 +83,8 @@ private
    def decrypt(value)
      begin
        value = value || ""
-       puts "Decrypt: #{value}"
-       len   = ActiveSupport::MessageEncryptor.key_len
+       logger.debug "Decrypt: #{value}"
+       len = ActiveSupport::MessageEncryptor.key_len
        password = ENV['CRYPTED_PASSWORD']
        key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt,len)
        crypt = ActiveSupport::MessageEncryptor.new(key)
