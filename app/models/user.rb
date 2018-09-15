@@ -65,8 +65,9 @@ private
    def encrypt(value)
      begin
        value = value || ""
+       puts "Encrypt: #{value}"
        len = ActiveSupport::MessageEncryptor.key_len
-       password = ENV['crypted_password']
+       password = ENV['CRYPTED_PASSWORD']
 
        key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt,len)
        crypt = ActiveSupport::MessageEncryptor.new(key)
@@ -81,8 +82,9 @@ private
    def decrypt(value)
      begin
        value = value || ""
+       puts "Decrypt: #{value}"
        len   = ActiveSupport::MessageEncryptor.key_len
-       password = ENV['crypted_password']
+       password = ENV['CRYPTED_PASSWORD']
        key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt,len)
        crypt = ActiveSupport::MessageEncryptor.new(key)
        decrypted_data = crypt.decrypt_and_verify(value)
@@ -95,6 +97,7 @@ private
 
    def getSalt
      if self.salt.blank?
+       puts ".. salt is blank"
        len = ActiveSupport::MessageEncryptor.key_len
        self.salt = Base64.encode64(SecureRandom.random_bytes(len))
      end
