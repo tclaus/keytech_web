@@ -46,8 +46,11 @@ class User < ApplicationRecord
 
    # returns current keytech kit object
    def keytechAPI
-     logger.info "Create keytechkit object with: #{keytech_url}, #{keytech_username}, #{keytech_password}"
-     KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
+     if @keytechAPI == nil
+       logger.info "Create keytechkit object with: #{keytech_url}, #{keytech_username}, #{keytech_password}"
+       @keytechAPI = KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
+     end
+     return @keytechAPI
    end
 
 private

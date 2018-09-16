@@ -13,8 +13,8 @@ module ElementsHelper
   end
 
   # Translates a elementkey MISC_FILE:123 to a classkey: MISC_FILE
-  def classkey(elementKey)
-    classKey.split(':').first
+  def classKey(elementKey)
+    elementKey.split(':').first
   end
 
   def editorValueParser(value)
@@ -38,7 +38,7 @@ module ElementsHelper
     end
 
     if attribute_name == "classname"
-      return element.classDisplayName
+      return displayNameForClass(classKey(element.key))
     end
 
     # Check key value
