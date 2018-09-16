@@ -15,7 +15,7 @@ class ElementsController < ApplicationController
       load_element
       load_my_keytech
       load_element_tabs
-      @layout = keytechKit.layouts.main_layout(
+      @layout = keytechAPI.layouts.main_layout(
         classkey(@element.key)
       )
       # load in another controller?
@@ -37,7 +37,7 @@ class ElementsController < ApplicationController
       load_element_tabs
       load_lister_layout
 
-      @elements = keytechKit.elements.structure(params[:id], {"attributes":"all"})
+      @elements = keytechAPI.elements.structure(params[:id], {"attributes":"all"})
       simplifyKeyValueList(@elements)
 
       render 'application/home'
@@ -56,7 +56,7 @@ class ElementsController < ApplicationController
       load_element_tabs
       load_lister_layout
 
-      @elements = keytechKit.elements.whereused(params[:id], {"attributes":"all"})
+      @elements = keytechAPI.elements.whereused(params[:id], {"attributes":"all"})
       simplifyKeyValueList(@elements)
 
       render 'application/home'
@@ -73,7 +73,7 @@ class ElementsController < ApplicationController
       load_element("none")
       load_my_keytech
       load_element_tabs
-      @notes = keytechKit.notes.load(@element.key)
+      @notes = keytechAPI.notes.load(@element.key)
       # load in another controller?
       render 'application/home'
     else
@@ -93,7 +93,7 @@ class ElementsController < ApplicationController
   def search
     if user_signed_in?
 
-      @layout = keytechKit.layouts.global_lister_layout
+      @layout = keytechAPI.layouts.global_lister_layout
       options = {groupBy:"classkey", classes: params[:classes]}
       @searchResponseHeader = find_element_by_search(params[:q], options)
       @elements = @searchResponseHeader.elementList
@@ -108,20 +108,20 @@ class ElementsController < ApplicationController
 
   def masterfile
     # Load masterfile from elementID
-    masterfilename = keytechKit.files.masterfilename(params[:id])
-    files = keytechKit.files.loadMasterfile(params[:id])
+    masterfilename = ktAPI.files.masterfilename(params[:id])
+    files = keytechAPI.files.loadMasterfile(params[:id])
     send_data files, type: files.content_type, disposition: 'attachment', filename: masterfilename
   end
 
   def thumbnail
     elementKey = params[:id]
-    image = keytechKit.elements.thumbnail(elementKey)
+    image = keytechAPI.elements.thumbnail(elementKey)
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def preview
     elementKey = params[:id]
-    image = keytechKit.elements.preview(elementKey)
+    image = keytechAPI.elements.preview(elementKey)
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
@@ -150,18 +150,18 @@ class ElementsController < ApplicationController
 
   def load_lister_layout
     @layout = Rails.cache.fetch("global_lister_layout", expires_in: 12.hours) do
-      keytechKit.layouts.global_lister_layout
+      keytechAPI.layouts.global_lister_layout
     end
   end
 
   def load_element_tabs
     @subareas = Rails.cache.fetch("#{@element.key}/subareas", expires_in: 12.hours) do
-        @subareas = keytechKit.classes.load(classkey(@element.key)).availableSubareas
+        @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
     end
 
-    @hasMasterfile = keytechKit.files.hasMasterfile(@element.key)
+    @hasMasterfile = keytechAPI.files.hasMasterfile(@element.key)
     if @hasMasterfile == true
-      @masterfileInfo = keytechKit.files.masterfileInfo(@element.key)
+      @masterfileInfo = keytechAPI.files.masterfileInfo(@element.key)
     end
   end
 
@@ -169,17 +169,16 @@ class ElementsController < ApplicationController
     elementKey.split(':').first
   end
 
-  def keytechKit
-    current_user.keytechKit
-  end
-
   def find_element_by_search(searchText, options)
     # Fake masses of elements?
-     keytechKit.search.query(searchText,options)
+     keytechAPI.search.query(searchText,options)
   end
 
   def load_element(attributes = "all")
-    @element = keytechKit.elements.load(params[:id], {"attributes":attributes})
+    @element = keytechAPI.elements.load(params[:id], {"attributes":attributes})
   end
 
+  def keytechAPI
+    current_user.keytechAPI
+  end
 end

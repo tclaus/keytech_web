@@ -7,7 +7,7 @@ module ElementsHelper
     end
 
     Rails.cache.fetch("#{classKey}/displayname", expires_in: 12.hours) do
-      classDefinition = current_user.keytechKit.classes.load(classKey)
+      classDefinition = current_user.keytechAPI.classes.load(classKey)
       classDefinition.displayname
     end
   end

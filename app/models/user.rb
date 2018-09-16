@@ -28,7 +28,7 @@ class User < ApplicationRecord
 
    def hasValidConnection
      begin
-       return !keytechKit.currentUser.blank?
+       return !keytechAPI.currentUser.blank?
      rescue Exception => exc
        logger.error("Invalid keytech credentials or server not found #{exc.message}")
        return false
@@ -36,17 +36,17 @@ class User < ApplicationRecord
    end
 
    def favorites
-     keytechKit.currentUser.favorites
+     keytechAPI.currentUser.favorites
    end
 
    def queries
-     keytechKit.currentUser.queries
+     keytechAPI.currentUser.queries
    end
 
    # returns current keytech kit object
-   def keytechKit
+   def keytechAPI
      logger.info "Create keytechkit object with: #{keytech_url}, #{keytech_username}, #{keytech_password}"
-      KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
+     KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
    end
 
 private
@@ -66,7 +66,6 @@ private
    def encrypt(value)
      begin
        value = value || ""
-       logger.debug "Encrypt: #{value}"
        len = ActiveSupport::MessageEncryptor.key_len
        password = ENV['CRYPTED_PASSWORD']
 
@@ -83,7 +82,6 @@ private
    def decrypt(value)
      begin
        value = value || ""
-       logger.debug "Decrypt: #{value}"
        len = ActiveSupport::MessageEncryptor.key_len
        password = ENV['CRYPTED_PASSWORD']
        key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt,len)
