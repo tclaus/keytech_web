@@ -37,23 +37,31 @@ class User < ApplicationRecord
    end
 
    def favorites
-     keytechAPI.currentUser.favorites
+     Rails.cache.fetch("#{key}", expires_in: 3.minute) do
+       keytechAPI.currentUser.favorites
+     end
+
    end
 
    def queries
-     keytechAPI.currentUser.queries
+     Rails.cache.fetch("#{key}", expires_in: 3.minute) do
+       keytechAPI.currentUser.queries
+     end
    end
 
    # returns current keytech kit object
    def keytechAPI
      if @keytechAPI == nil
-       logger.info "Create keytechkit object with: #{keytech_url}, #{keytech_username}, #{keytech_password}"
        @keytechAPI = KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
      end
      return @keytechAPI
    end
 
 private
+    def key
+      "#{keytech_username}@#{keytech_url}"
+    end
+
     def encryptValues
       self.keytech_url = encrypt(self.keytech_url)
       self.keytech_username = encrypt(self.keytech_username)

@@ -1,4 +1,4 @@
-<div class="table-responsive-lg">
+<div class="table-responsive">
   <table class="table table-striped table-hover table-sm">
     <caption><%= @elements.count %> Elemente</caption>
     <thead>
@@ -14,9 +14,7 @@
         <tr>
           <% @layout.controls.each do |control| %>
           <td>
-            <%= link_to show_element_path(element.key) do %>
-              <%= listerValueParser(element, control.attributeName) %>
-            <% end %>
+            <%= render partial:'table_cell',locals: {control: control, element: element} %>
           </td>
           <% end %>
         </tr>

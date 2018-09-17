@@ -58,7 +58,12 @@ module ElementsHelper
         return dateParser(value)
       end
     end
-    value
+    
+    if value.is_a? String
+      value.strip
+    else
+      value
+    end
   end
 
  # Returns a german localized datetime

@@ -91,11 +91,20 @@ class ElementsController < ApplicationController
   end
 
   def show_bom
-    load_element("none")
-    load_my_keytech
-    load_element_tabs
+    # redirect to a view
+    if user_signed_in?
+      load_element("none")
+      load_my_keytech
+      load_element_tabs
+      load_bom_layout
 
-    render 'application/home'
+      @elements = keytechAPI.elements.billOfMaterial(params[:id], {"attributes":"lister"})
+
+      render 'application/home'
+    else
+      # 404 not found?
+      render 'application/landing_page'
+    end
   end
 
   def show_messages
@@ -124,7 +133,7 @@ class ElementsController < ApplicationController
 
   def masterfile
     # Load masterfile from elementID
-    masterfilename = ktAPI.files.masterfilename(params[:id])
+    masterfilename = keytechAPI.files.masterfilename(params[:id])
     files = keytechAPI.files.loadMasterfile(params[:id])
     send_data files, type: files.content_type, disposition: 'attachment', filename: masterfilename
   end
@@ -165,13 +174,19 @@ class ElementsController < ApplicationController
   end
 
   def load_lister_layout
-    @layout = Rails.cache.fetch("global_lister_layout", expires_in: 12.hours) do
+    @layout = Rails.cache.fetch("global_lister_layout", expires_in: 1.hours) do
       keytechAPI.layouts.global_lister_layout
     end
   end
 
+  def load_bom_layout
+    @layout = Rails.cache.fetch("bom_lister_layout", expires_in: 1.hours) do
+      keytechAPI.layouts.bom_lister_layout
+    end
+  end
+
   def load_element_tabs
-    @subareas = Rails.cache.fetch("#{@element.key}/subareas", expires_in: 12.hours) do
+    @subareas = Rails.cache.fetch("#{@element.key}/subareas", expires_in: 1.hours) do
         @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
     end
 
