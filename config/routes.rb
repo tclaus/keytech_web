@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'search' , to: 'elements#search', as: 'search_element'
   # Element Tabs, need to match with tabs provided by keytech API
 
+
   get 'element/:id/editor', to: 'elements#show_editor'
   get 'element/:id/links', to: 'elements#show_links'
   get 'element/:id/whereused', to: 'elements#show_whereused'

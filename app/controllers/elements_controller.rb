@@ -119,7 +119,7 @@ class ElementsController < ApplicationController
     if user_signed_in?
 
       @layout = keytechAPI.layouts.global_lister_layout
-      options = {groupBy:"classkey", classes: params[:classes], attributes:"lister"}
+      options = {byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister"}
       @searchResponseHeader = find_element_by_search(params[:q], options)
       @elements = @searchResponseHeader.elementList
       simplifyKeyValueList(@elements)

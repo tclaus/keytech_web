@@ -15,10 +15,10 @@
     <div class="my_keytech">
       <h5>Suchen</h5>
       <ul>
-      <% @queries.each do |fav| %>
-        <% if !fav.targetElementKey.blank? %>
+      <% @queries.each do |query| %>
+        <% if !query.targetElementKey.blank? %>
         <li>
-          <%= link_to fav.entryName,'#' %>
+          <%= link_to query.entryName,search_element_path(byquery: query.targetElementKey, reload: true) %>
         </li>
         <% end %>
       <% end %>

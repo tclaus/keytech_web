@@ -37,14 +37,14 @@ class User < ApplicationRecord
    end
 
    def favorites
-     Rails.cache.fetch("#{key}", expires_in: 3.minute) do
+     Rails.cache.fetch("#{key}/favorites", expires_in: 3.minute) do
        keytechAPI.currentUser.favorites
      end
 
    end
 
    def queries
-     Rails.cache.fetch("#{key}", expires_in: 3.minute) do
+     Rails.cache.fetch("#{key}/queries", expires_in: 3.minute) do
        keytechAPI.currentUser.queries
      end
    end
