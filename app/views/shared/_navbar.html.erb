@@ -3,7 +3,7 @@
   <% if user_signed_in? %>
     <span class="small"> <%= current_user.keytech_url %> </span> <br>
   <% end %>
-  <a class="navbar-brand" href="#">keytech Web</a>
+  <a class="navbar-brand" href="/">keytech Web</a>
 
 </div>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,9 +19,9 @@
     </ul>
     <ul class="nav justify-content-end">
       <% if (!user_signed_in?) %>
-        <li class="nav-item"><%= link_to 'Sign in', new_user_session_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to 'Einloggen', new_user_session_path, class: "nav-link" %></li>
         <span class="my-2">or</span>
-        <li class="nav-item"><%= link_to 'Sign up', new_user_registration_path,class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to 'Anmelden', new_user_registration_path,class: "nav-link" %></li>
       <% end %>
     </ul>
     <% if (user_signed_in?) %>
@@ -36,9 +36,9 @@
             <%= current_user.email %>
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <%= link_to 'Settings', edit_user_registration_path, class: "dropdown-item" %>
+            <%= link_to 'Einstellungen', edit_user_registration_path, class: "dropdown-item" %>
             <div class="dropdown-divider"></div>
-            <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+            <%= link_to 'Abmelden', destroy_user_session_path, method: :delete, class: "dropdown-item" %>
           </div>
         </li>
       </ul>
