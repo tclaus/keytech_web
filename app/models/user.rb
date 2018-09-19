@@ -45,7 +45,7 @@ class User < ApplicationRecord
 
    def queries
      Rails.cache.fetch("#{key}/queries", expires_in: 3.minute) do
-       keytechAPI.currentUser.queries
+       keytechAPI.currentUser.queries({withSystemQueries:"all", ignoreTypes:"attributes"})
      end
    end
 
