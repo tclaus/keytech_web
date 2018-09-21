@@ -108,7 +108,7 @@ private
 
    def getSalt
      if self.salt.blank?
-       puts ".. salt is blank"
+       puts ".. salt is blank! Creating a new salt."
        len = ActiveSupport::MessageEncryptor.key_len
        self.salt = Base64.encode64(SecureRandom.random_bytes(len))
      end

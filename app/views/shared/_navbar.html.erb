@@ -3,7 +3,7 @@
   <% if user_signed_in? %>
     <span class="small"> <%= current_user.keytech_url %> </span> <br>
   <% end %>
-  <a class="navbar-brand" href="/">keytech Web</a>
+  <a class="navbar-brand" href="/">PLM Web</a>
 
 </div>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,8 +20,9 @@
     <ul class="nav justify-content-end">
       <% if (!user_signed_in?) %>
         <li class="nav-item"><%= link_to 'Einloggen', new_user_session_path, class: "nav-link" %></li>
-        <span class="my-2">or</span>
-        <li class="nav-item"><%= link_to 'Anmelden', new_user_registration_path,class: "nav-link" %></li>
+        <span class="my-2">oder</span>
+        <li class="nav-item"><%= link_to 'Kostenlos Registrieren', new_user_registration_path,class: "nav-link" %></li>
+
       <% end %>
     </ul>
     <% if (user_signed_in?) %>

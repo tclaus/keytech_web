@@ -1,1 +1,67 @@
-Landing Page
+<!-- Header with Background Image -->
+   <header class="business-header">
+     <div class="container">
+       <div class="row">
+         <div class="col-lg-7">
+           <h1 class="display-3 text-center text-dark mt-4">PLM Web</h1>
+            <p>PLM Zugriff per web-Browser. Als Ingeneur, Konstrukteur, Mechaniker oder Entscheider haben Sie Zugriff auf ihre keytech Daten von überall.
+              Egal welches Betriebssystem, egal, wo sie gerade sind. Ob Mac, Tablet oder Windows.
+            </p>
+         </div>
+       </div>
+     </div>
+   </header>
+
+   <!-- Page Content -->
+   <div class="container">
+
+     <div class="row">
+       <div class="col-sm-8">
+         <h2 class="mt-4">PLM Web</h2>
+         <p>Losgelöst vom Betriebssystem. Keine lokale installation. Wartungsfrei. Überall verfügbar.
+           Wir haben Verstanden, was Sie brauchen.
+         Holen Sie Ihre Dokumente, Zeichnungen, Stücklisten direkt auf Ihr Sytem. Nutzen Sie die Software, die Sie bereits haben: Ihren Browser.
+       Firefox, Safarie, Chrome</p>
+         <p>Auch lokal 'On Premise': als Docker-Container verfügbar*</p>
+         <p>
+           <%= link_to 'Kostenlos Registrieren', new_user_registration_path, class: "btn btn-primary btn-lg" %>'
+         </p>
+       </div>
+     </div>
+     <!-- /.row -->
+
+     <div class="row">
+       <div class="col-sm-4 my-4">
+         <div class="card">
+           <img class="card-img-top" src="browser_320x200.png" alt="browser logos">
+           <div class="card-body">
+             <h4 class="card-title">Browser basierend</h4>
+             <p class="card-text">Unabhängig vom Betriebssystem: Ihre keytech Dokumente auf OS X, Windows, iOS, Android - auf jeden modernen Browser. </p>
+           </div>
+
+         </div>
+       </div>
+       <div class="col-sm-4 my-4">
+         <div class="card">
+           <img class="card-img-top" src="http://placehold.it/300x200" alt="">
+           <div class="card-body">
+             <h4 class="card-title">Keine lokale Installation</h4>
+             <p class="card-text">Keine lokale Installation nötig. Einfach einloggen und loselegen. </p>
+           </div>
+
+         </div>
+       </div>
+       <div class="col-sm-4 my-4">
+         <div class="card">
+            <img class="card-img-top" src="docker_320x200.png" alt="docker locgo">
+           <div class="card-body">
+             <h4 class="card-title">Intern? Mit Docker möglich</h4>
+             <p class="card-text">Sie möchten lieber volle Kontrolle über Ihre Daten, aber intern per Browser PLM nutzen?
+             Mit Docker können Sie eine 'On Premise' Lösung hausintern realisieren - ohne Zugang nach aussen.*<br>
+          <small>Wird später realisiert</small>  </p>
+           </div>
+
+         </div>
+       </div>
+
+     </div>
