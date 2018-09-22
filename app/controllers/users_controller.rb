@@ -32,9 +32,9 @@ class UsersController < ApplicationController
   end
 
   def set_keytech_demo_server
-    current_user.keytech_url = "https://demo.keytech.de" #todo: use environment
-    current_user.keytech_username = "jgrant"
-    current_user.keytech_password = ""
+    current_user.keytech_url = ENV["KEYTECH_URL"]
+    current_user.keytech_username = ENV["KEYTECH_USERNAME"]
+    current_user.keytech_password = ENV["KEYTECH_PASSWORD"]
     current_user.save
 
     redirect_to keytech_settings_path

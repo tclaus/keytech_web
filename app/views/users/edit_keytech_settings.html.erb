@@ -20,7 +20,7 @@
 
     <div class="field">
       <%= f.label :keytech_password, class: "sr-only" %>
-      <i>(Passwords are secure stored crypted)</i><br/>
+      <i>(keytech Anmeldedaten werden verschlüsselt gespeichert)</i><br/>
       <%= f.password_field :keytech_password, autocomplete: "password",placeholder:"keytech Passwort", class:"form-control" %>
     </div>
     <%= link_to 'Use keytech demo server',set_keytech_demo_server_path , method: :put%>

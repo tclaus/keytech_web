@@ -9,6 +9,13 @@ class User < ApplicationRecord
  before_save { self.email = email.downcase }
  before_create :default_values
 
+ after_initialize do
+   if self.new_record?
+     # values will be available for new record forms.
+     default_values
+   end
+ end
+
  before_save :encryptValues
  after_save :decryptValues
  after_initialize :decryptValues
@@ -22,9 +29,10 @@ class User < ApplicationRecord
 
 
    def default_values
-     self.keytech_url ||= 'https://demo.keytech.de' # TODO: Use Environment
-     self.keytech_username ||= 'jgrant' # TODO: Use Environment
-     self.keytech_password ||= '' # TODO: Use Environment
+     puts "run after create"
+     self.keytech_url = ENV["KEYTECH_URL"]
+     self.keytech_username = ENV["KEYTECH_USERNAME"]
+     self.keytech_password = ENV["KEYTECH_PASSORD"]
    end
 
    def hasValidConnection

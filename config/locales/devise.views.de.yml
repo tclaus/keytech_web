@@ -27,6 +27,14 @@ de:
         updated_at: Aktualisiert am
     models:
       user: Benutzer
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              taken: Die Emailadresse wird bereits verwendet
+            confirmation_token:
+              invalid: Der Bestätigungsschlüssel ist nicht gültig.
   devise:
     confirmations:
       confirmed: Ihre E-Mail Adresse wurde erfolgreich bestätigt.
