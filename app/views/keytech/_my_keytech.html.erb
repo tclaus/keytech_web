@@ -18,7 +18,7 @@
       <% @queries.each do |query| %>
         <% if !query.targetElementKey.blank? %>
         <li>
-          <%= link_to query.entryName,search_element_path(byquery: query.targetElementKey, reload: true) %>
+          <%= link_to query.entryName,search_element_path(byquery: query.targetElementKey) %>
         </li>
         <% end %>
       <% end %>

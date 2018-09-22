@@ -43,6 +43,7 @@ gem 'resque'
 
 # User Auth
 gem 'devise'
+gem 'devise-i18n'
 
 # Non Blocking Notifications
 gem 'toastr-rails'
