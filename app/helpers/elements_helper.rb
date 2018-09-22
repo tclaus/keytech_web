@@ -17,6 +17,20 @@ module ElementsHelper
     elementKey.split(':').first
   end
 
+  # Returns a String value of "DO","MI" or "FD" to indicate that the elementkey refers to a Document, MasterItem or is a Folder
+  def classType(elementKey)
+    classKey = self.classKey(elementKey)
+    if classKey.upcase.end_with?("_MI")
+      return "MI"
+    end
+
+    if classKey.end_with?("_FD") || classKey.end_with?("_WF")
+      return "FD"
+    end
+
+    return "DO"
+  end
+
   def editorValueParser(value)
     parseValue(value)
   end
@@ -58,7 +72,7 @@ module ElementsHelper
         return dateParser(value)
       end
     end
-    
+
     if value.is_a? String
       value.strip
     else

@@ -15,6 +15,21 @@
   width: auto;
 }
 
+.thumbnail_modalable {
+  max-width: 210px;
+  width: auto;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.thumbnail_modalable:hover {opacity: 0.7;}
+
+.thumbnail_modal {
+  max-width: 440px;
+  width: auto;
+}
+
 .list-group.group-by-classes {
   margin-top: 10px;
   font-size: 90%;
