@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   def set_csp
     # Set all restrictions for content security
     response.headers['Content-Security-Policy'] =
+      "frame-ancestors 'none';"\
+      "X-Frame-Options: DENY;"\
       "default-src 'none';" \
       "script-src 'self' cdnjs.cloudflare.com;" \
       "img-src 'self';" \
