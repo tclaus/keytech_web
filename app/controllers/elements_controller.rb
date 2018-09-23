@@ -121,6 +121,7 @@ class ElementsController < ApplicationController
       @layout = keytechAPI.layouts.global_lister_layout
       options = {byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister"}
       @searchResponseHeader = find_element_by_search(params[:q], options)
+
       @elements = @searchResponseHeader.elementList
       simplifyKeyValueList(@elements)
       # load in another controller?

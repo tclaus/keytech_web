@@ -2,6 +2,23 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_locale
+  before_action :set_csp
+
+
+  def set_csp
+    # Set all restrictions for content security
+    response.headers['Content-Security-Policy'] =
+      "default-src 'none';" \
+      "script-src 'self' cdnjs.cloudflare.com;" \
+      "img-src 'self';" \
+      "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com;" \
+      "font-src  'self' fonts.gstatic.com;"\
+      "child-src 'self' js.stripe.com;" \
+      "connect-src 'self' api.stripe.com;"\
+      "frame-src 'self' js.stripe.com;" \
+      "form-action 'self';"\
+      "base-uri 'self'"
+  end
 
   # Show hompage before logged in
   def home
