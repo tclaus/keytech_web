@@ -38,6 +38,9 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <%= link_to 'Einstellungen', edit_user_registration_path, class: "dropdown-item" %>
+            <% if current_user.isAdmin %>
+              <%= link_to 'Administration', admin_path, class: "dropdown-item" %>
+            <% end %>
             <div class="dropdown-divider"></div>
             <%= link_to 'Abmelden', destroy_user_session_path, method: :delete, class: "dropdown-item" %>
           </div>

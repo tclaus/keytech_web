@@ -65,6 +65,10 @@ class User < ApplicationRecord
      return @keytechAPI
    end
 
+   def isAdmin
+       self.email == ENV['ADMIN_MAIL']
+   end
+
 private
     def key
       "#{keytech_username}@#{keytech_url}"

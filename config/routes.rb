@@ -9,17 +9,17 @@ Rails.application.routes.draw do
                            edit: 'profile',
                            sign_up: 'registration' }
 
-  controller :users do
-    get 'keytech_settings' => :edit_keytech_settings
-    put 'update_keytech_settings' => :update_keytech_settings
-    put 'set_keytech_demo_server' => :set_keytech_demo_server
-  end
+  resources :users, only: [:show, :destroy] do
+      member do
+        get 'keytech_settings' => :edit_keytech_settings
+        put 'update_keytech_settings' => :update_keytech_settings
+        put 'set_keytech_demo_server' => :set_keytech_demo_server
+      end
+    end
 
-  resource :user
 
   get 'search' , to: 'elements#search', as: 'search_element'
   # Element Tabs, need to match with tabs provided by keytech API
-
 
   get 'element/:id/editor', to: 'elements#show_editor'
   get 'element/:id/links', to: 'elements#show_links'
@@ -35,5 +35,10 @@ Rails.application.routes.draw do
   get 'element/:id/masterfile', to: 'elements#masterfile', as: 'masterfile_element'
 
   get 'element/:id', to: redirect('element/%{id}/editor'), as: 'show_element'
+
+
+  controller :admin do
+      get 'admin' => :index
+    end
 
 end

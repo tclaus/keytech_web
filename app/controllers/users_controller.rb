@@ -12,6 +12,8 @@ class UsersController < ApplicationController
   def show
   end
 
+
+
   # GET /users/new
   def new
     @user = User.new
@@ -41,13 +43,15 @@ class UsersController < ApplicationController
   end
 
   # DELETE /users/1
-  # DELETE /users/1.json
   def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
+    user = User.find(params[:id])
+    if user.id == current_user.id
+      flash[:alert] = "Sie können sich nicht selber löschen"
+    else
+      user.destroy
     end
+
+    redirect_back fallback_location: admin_path
   end
 
   private
