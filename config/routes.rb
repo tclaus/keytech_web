@@ -9,13 +9,12 @@ Rails.application.routes.draw do
                            edit: 'profile',
                            sign_up: 'registration' }
 
-  resources :users, only: [:show, :destroy] do
-      member do
-        get 'keytech_settings' => :edit_keytech_settings
-        put 'update_keytech_settings' => :update_keytech_settings
-        put 'set_keytech_demo_server' => :set_keytech_demo_server
-      end
-    end
+  resources :users, only: [:show, :destroy]
+  controller :users do
+    get 'keytech_settings' => :edit_keytech_settings
+    put 'keytech_settings' => :update_keytech_settings
+    put 'set_keytech_demo_server' => :set_keytech_demo_server
+  end
 
 
   get 'search' , to: 'elements#search', as: 'search_element'

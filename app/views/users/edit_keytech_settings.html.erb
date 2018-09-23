@@ -6,7 +6,7 @@
 
     <h2>keytech web-API Einstellungen</h2>
     <hr>
-    <%= form_for current_user, url: update_keytech_settings_path, html: { method: :put } do |f| %>
+    <%= form_for current_user, url: keytech_settings_path, html: { method: :put } do |f| %>
 
     <div class="field">
       <%= f.label :keytech_url, class: "sr-only" %><br/>
