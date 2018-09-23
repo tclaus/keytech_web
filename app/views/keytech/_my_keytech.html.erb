@@ -5,7 +5,21 @@
       <% @favorites.each do |fav| %>
         <% if !fav.targetElementKey.blank? %>
         <li>
-          <%= link_to fav.entryName, show_element_path(fav.targetElementKey) %>
+          <%= link_to show_element_path(fav.targetElementKey) do %>
+            <div class="icon-small">
+              <% if classType(fav.targetElementKey) == "FD" %>
+                <i class="far fa-folder"></i><%= fav.entryName %>
+              <% end %>
+
+              <% if classType(fav.targetElementKey) == "DO" %>
+                <i class="far fa-file"></i><%= fav.entryName %>
+              <% end %>
+
+              <% if classType(fav.targetElementKey) == "MI" %>
+                <i class="fas fa-cog"></i><%= fav.entryName %>
+              <% end %>
+            </div>
+          <% end %>
         </li>
         <% end %>
       <% end %>
@@ -18,7 +32,11 @@
       <% @queries.each do |query| %>
         <% if !query.targetElementKey.blank? %>
         <li>
-          <%= link_to query.entryName,search_element_path(byquery: query.targetElementKey) %>
+          <%= link_to search_element_path(byquery: query.targetElementKey) do %>
+            <div class="icon-small">
+              <i class="fas fa-search"></i><%= query.entryName %>
+            </div>
+          <% end %>
         </li>
         <% end %>
       <% end %>
