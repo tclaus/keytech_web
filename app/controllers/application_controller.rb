@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
     if user_signed_in?
 
-      if (current_user.hasValidConnection)
+      if (current_user.hasValidConnection?)
         @favorites = current_user.favorites
         @queries = current_user.queries
 

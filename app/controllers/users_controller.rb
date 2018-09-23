@@ -12,8 +12,6 @@ class UsersController < ApplicationController
   def show
   end
 
-
-
   # GET /users/new
   def new
     @user = User.new
@@ -29,8 +27,12 @@ class UsersController < ApplicationController
   def update_keytech_settings
     puts "Update settings #{params}"
     current_user.update_attributes(keytech_params)
+    if !current_user.hasValidConnection?
+      redirect_to keytech_settings_path, alert: 'keytech URL, Benutzername oder Passwort falsch'
+    else
+      redirect_to keytech_settings_path, notice: 'Gespeichert'
+    end
 
-    redirect_to keytech_settings_path, notice: 'Saved...'
   end
 
   def set_keytech_demo_server

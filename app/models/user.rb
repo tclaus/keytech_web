@@ -35,7 +35,7 @@ class User < ApplicationRecord
      self.keytech_password = ENV["KEYTECH_PASSORD"]
    end
 
-   def hasValidConnection
+   def hasValidConnection?
      begin
        return !keytechAPI.currentUser.blank?
      rescue Exception => exc
