@@ -12,16 +12,18 @@ class ElementsController < ApplicationController
     # redirect to a view
     if user_signed_in?
 
-      load_element
       load_my_keytech
-      load_element_tabs
-      @layout = keytechAPI.layouts.main_layout(
-        classkey(@element.key)
-      )
-      # load in another controller?
+      load_element
+      if @element != nil
+        load_element_tabs
+        @layout = keytechAPI.layouts.main_layout(
+          classkey(@element.key)
+        )
+      else
+        flash_element_not_found
+      end
       render 'application/home'
     else
-      # 404 not found?
       render 'application/landing_page'
     end
   end
@@ -31,15 +33,17 @@ class ElementsController < ApplicationController
 
     # redirect to a view
     if user_signed_in?
-      # Add favorites and qieries
-      load_element("none")
+
       load_my_keytech
-      load_element_tabs
-      load_lister_layout
-
-      @elements = keytechAPI.elements.structure(params[:id], {"attributes":"all"})
-      simplifyKeyValueList(@elements)
-
+      load_element("none") #TODO: attributes: none
+      if @element != nil
+        load_element_tabs
+        load_lister_layout
+        @elements = keytechAPI.elements.structure(params[:id], {"attributes":"all"})
+        simplifyKeyValueList(@elements)
+      else
+        flash_element_not_found
+      end
       render 'application/home'
     else
       # 404 not found?
@@ -51,17 +55,19 @@ class ElementsController < ApplicationController
     # redirect to a view
     if user_signed_in?
       # Add favorites and qieries
-      load_element("none")
       load_my_keytech
-      load_element_tabs
-      load_lister_layout
+      load_element("none")
+      if @element != nil
+        load_element_tabs
+        load_lister_layout
 
-      @elements = keytechAPI.elements.whereused(params[:id], {"attributes":"all"})
-      simplifyKeyValueList(@elements)
-
+        @elements = keytechAPI.elements.whereused(params[:id], {"attributes":"all"})
+        simplifyKeyValueList(@elements)
+      else
+        flash_element_not_found
+      end
       render 'application/home'
     else
-      # 404 not found?
       render 'application/landing_page'
     end
   end
@@ -69,37 +75,44 @@ class ElementsController < ApplicationController
   def show_notes
     # redirect to a view
     if user_signed_in?
-
-      load_element("none")
       load_my_keytech
-      load_element_tabs
-      @notes = keytechAPI.notes.load(@element.key)
-      # load in another controller?
-      render 'application/home'
+      load_element("none")
+      if @element != nil
+        load_element_tabs
+        @notes = keytechAPI.notes.load(@element.key)
+      else
+        flash_element_not_found
+      end
+        render 'application/home'
     else
-      # 404 not found?
       render 'application/landing_page'
     end
   end
 
   def show_status
-    load_element("none")
-    load_my_keytech
-    load_element_tabs
 
+    load_my_keytech
+    load_element("none")
+    if @element != nil
+      load_element_tabs
+    else
+      flash_element_not_found
+    end
     render 'application/home'
   end
 
   def show_bom
     # redirect to a view
     if user_signed_in?
-      load_element("none")
       load_my_keytech
-      load_element_tabs
-      load_bom_layout
-
-      @elements = keytechAPI.elements.billOfMaterial(params[:id], {"attributes":"lister"})
-
+      load_element("none")
+      if @element != nil
+        load_element_tabs
+        load_bom_layout
+        @elements = keytechAPI.elements.billOfMaterial(params[:id], {"attributes":"lister"})
+      else
+        flash_element_not_found
+      end
       render 'application/home'
     else
       # 404 not found?
@@ -108,9 +121,15 @@ class ElementsController < ApplicationController
   end
 
   def show_messages
+
     load_element("none")
     load_my_keytech
-    load_element_tabs
+
+    if @element != nil
+      load_element_tabs
+    else
+      flash_element_not_found
+    end
 
     render 'application/home'
   end
@@ -151,7 +170,33 @@ class ElementsController < ApplicationController
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
+  def destroy
+    if user_signed_in?
+      # rescue where used, if any
+      whereused = keytechAPI.elements.whereused(params[:id], {"attributes":"none"})
+
+      result = keytechAPI.elements.delete(params[:id])
+      if result.success?
+        flash[:info] = "Element wurde gelöscht."
+      else
+        logger.warn "Element #{params[:id]} can not be deleted. Server message: '#{result.headers["x-errordescription"]}'"
+        flash[:error] = "Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen."
+      end
+    end
+
+    if !whereused.blank?
+      redirect_to "/element/#{whereused[0].key}" 
+    else
+      redirect_back fallback_location: admin_path
+    end
+  end
+
   private
+
+  def flash_element_not_found
+    # After delete there is no element!
+    # flash[:warning] = "Ein Element mit dieser Nummer wurde nicht gefunden"
+  end
 
   # Removes the prefix as_do__,  as_sdo__ .. from keys in keyValueList.
   def simplifyKeyValueList(elements)
@@ -206,8 +251,9 @@ class ElementsController < ApplicationController
      keytechAPI.search.query(searchText,options)
   end
 
+  # Loads the element. Can set @element to nil
   def load_element(attributes = "all")
-    @element = keytechAPI.elements.load(params[:id], {"attributes":attributes})
+    @element = keytechAPI.elements.load(params[:id], {"attributes":  attributes})
   end
 
   def keytechAPI
