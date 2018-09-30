@@ -2,7 +2,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_locale
-  before_action :set_csp
+  # before_action :set_csp
 
 
   def set_csp
@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
       "frame-ancestors 'none';"\
       "X-Frame-Options DENY;"\
       "default-src 'none';" \
-      "script-src 'self' cdnjs.cloudflare.com;" \
+      "script-src unsafe-eval 'self' cdnjs.cloudflare.com  cdn.jsdelivr.net/npm/vue;" \
       "img-src 'self';" \
       "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com;" \
       "font-src  'self' fonts.gstatic.com;"\

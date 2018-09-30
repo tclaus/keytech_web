@@ -13,10 +13,13 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="/">Home
-          <span class="sr-only">(current)</span></a>
+        <div>&nbsp;</div>
+      </li>
+      <li class="nav-item">
+        <div class="action" id="add_element" data-toggle="tooltip" data-placement="top" title="Neues Element anlegen"><i class="far fa-plus-square fa-2x"></i></div>
       </li>
     </ul>
+
     <ul class="nav justify-content-end">
       <% if (!user_signed_in?) %>
         <li class="nav-item"><%= link_to 'Einloggen', new_user_session_path, class: "nav-link" %></li>

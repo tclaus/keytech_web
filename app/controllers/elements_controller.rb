@@ -185,7 +185,7 @@ class ElementsController < ApplicationController
     end
 
     if !whereused.blank?
-      redirect_to "/element/#{whereused[0].key}" 
+      redirect_to "/element/#{whereused[0].key}"
     else
       redirect_back fallback_location: admin_path
     end

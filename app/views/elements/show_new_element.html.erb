@@ -1,0 +1,53 @@
+<% content_for :title do %>
+  <%= @classDefinition.displayname %> anlegen
+<% end %>
+<% content_for :subtext do %>
+  Eigenschaften definieren
+<% end %>
+
+<% content_for :acceptButton do %>
+  Anlegen
+<% end %>
+
+<div id="data-list">
+  <%= form_tag '/engine/newelement', id: "create_element_form" do %>
+  <%= hidden_field_tag(:classKey, @classDefinition.classKey) %>
+
+  <div class="list-group modal-items-list" >
+    <% if !@classDefinition.hasNumberGenerator %>
+      <div class="list-group-item highlight">
+        <div class="form-group">
+          <%= label_tag(:elementName, "Name des Elementes") %>
+          <%= text_field_tag(:elementName,'', class:"form-control") %>
+        </div>
+      </div>
+    <% else %>
+      <small>Hat Nummergenerator</small>
+    <% end %>
+
+    <% # Add not nullable fields %>
+    <% @layout.controls.each do |layoutItem| %>
+      <% if layoutItem.isNullable == false && layoutItem.isEditable && layoutItem.controlType != "LABEL" %>
+        <div class="list-group-item highlight">
+          <%= render partial: "/shared/layout_control", locals:{layoutItem: layoutItem, required: true} %>
+        </div>
+      <% end %>
+    <% end %>
+  <hr>
+    <% # Add nullable fields (filterable?) %>
+    <% @layout.controls.each do |layoutItem| %>
+      <% if layoutItem.isNullable == true && layoutItem.isEditable && layoutItem.controlType != "LABEL" %>
+        <div class="list-group-item">
+          <%= render partial: "/shared/layout_control", locals:{layoutItem: layoutItem, required: false} %>
+        </div>
+      <% end %>
+    <% end %>
+
+  </div>
+  <div class="submit_button">
+    <%= submit_tag("Anlegen", class:"btn btn-primary") %>
+  </div>
+  <% end %>
+</div>
+
+<%= javascript_include_tag 'check_new_element' %>

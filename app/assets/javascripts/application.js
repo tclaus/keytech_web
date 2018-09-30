@@ -14,6 +14,10 @@
 //= require turbolinks
 
 //= require jquery
+//= require jquery-validate
 //= require toastr
 //= require popper
-//= require bootstrap-sprockets
+//= require bootstrap
+//= require flash_messages
+//= require add_element
+//= require vue

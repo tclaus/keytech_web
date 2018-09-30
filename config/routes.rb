@@ -20,10 +20,10 @@ Rails.application.routes.draw do
   get 'search' , to: 'elements#search', as: 'search_element'
   # Element Tabs, need to match with tabs provided by keytech API
   resources :elements, only: [:destroy]
-# TODO: Shiw auf "Show_element" gehen lasen? 
+# TODO: Show auf "Show_element" gehen lasen?
 
  # TODO: Hier den Controller - Trick anwenden?
-  get 'element/:id/editor', to: 'elements#show_editor'
+  get 'element/:id/editor', to: 'elements#show_editor', as: 'element_show'
   get 'element/:id/links', to: 'elements#show_links'
   get 'element/:id/whereused', to: 'elements#show_whereused'
   get 'element/:id/notes', to: 'elements#show_notes'
@@ -37,6 +37,15 @@ Rails.application.routes.draw do
   get 'element/:id/masterfile', to: 'elements#masterfile', as: 'masterfile_element'
 
   get 'element/:id', to: redirect('element/%{id}/editor'), as: 'show_element'
+
+  # Show classlist dialog (first)
+  get 'engine/new_element_class', to: 'engine#show_classes_dialog'
+  get 'engine/classes', to: 'engine#show_classes'
+
+  # Show element properties
+  get 'engine/newelement', to: 'engine#show_new_element_dialog'
+  post '/engine/newelement', to: 'engine#new_element'
+
 
 
   controller :admin do

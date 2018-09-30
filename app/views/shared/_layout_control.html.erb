@@ -1,0 +1,27 @@
+<% if layoutItem.controlType == "TEXT" %>
+  <div class="form-group">
+     <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
+     <%= text_field_tag(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control", required: required) %>
+   </div>
+<% end %>
+
+<% if layoutItem.controlType == "INTEGER" %>
+  <div class="form-group">
+     <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
+     <%= number_field(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control", required: required) %>
+   </div>
+<% end %>
+
+<% if layoutItem.controlType == "CHECK" %>
+  <div class="form-check">
+    <%= check_box_tag(layoutItem.attributeName, class:"form-check-input") %>
+     <%= label_tag(layoutItem.attributeName, layoutItem.displayname, class:"form-check-label", required: required) %>
+  </div>
+<% end %>
+
+<% if layoutItem.controlType == "DATE" %>
+  <div class="form-group">
+     <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
+     <%= date_field(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control") %>
+   </div>
+<% end %>

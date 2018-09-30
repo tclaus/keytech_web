@@ -1,0 +1,33 @@
+<% content_for :title do %>
+  Neues Element anlegen
+<% end %>
+<% content_for :subtext do %>
+  Wählen Sie erst eine Klasse
+<% end %>
+
+<% content_for :acceptButton do %>
+  Klasse wählen
+<% end %>
+
+<div id="data-list">
+  <div id="custom-search-input">
+      <div class="input-group col-md-12">
+          <input id="data-search" type="text" class="form-control input-lg" placeholder="Suche..." v-model="searchterm" />
+          <span class="input-group-btn">
+              <button class="btn btn-info btn-lg" type="button">
+                  <i class="fas fa-search"></i>
+              </button>
+          </span>
+      </div>
+  </div>
+
+  <div class="list-group modal-items-list" >
+    <div data-dismiss="modal" :data-classkey="item.classKey" v-on:click="click_class" class="classlist list-group-item list-group-item-action" v-for="item in items" v-if="item.displayname.toLowerCase().includes(searchterm.toLowerCase())">
+      <i class="far fa-folder"></i>
+      {{item.displayname}}<br> <small>{{item.classKey}}</small>
+    </div>
+  </div>
+
+</div>
+
+<%= javascript_include_tag 'classdefinition_filter' %>

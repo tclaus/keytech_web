@@ -1,14 +1,4 @@
 
-<% # Element Commands %>
-<div class="d-flex flex-row-reverse bd-highlight">
-  <div class="p-2 bd-highlight">
-    <%= link_to element_path, method: :delete, data: {confirm: "Möchten Sie dieses Element wirklich löschen?"}  do %>
-      <i class="far fa-trash-alt" data-toggle="tooltip" data-placement="top" title="Dieses Element löschen"></i>
-    <% end %>
-
-  </div>
-</div>
-
 <% # Element Tabs %>
 <ul class="nav nav-tabs">
       <% currentPath = request.url.split('/').last %>
