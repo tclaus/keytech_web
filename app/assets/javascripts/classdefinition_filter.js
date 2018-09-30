@@ -4,12 +4,14 @@ var app = new Vue({
     items: [],
     searchterm: ""
   },
-  created() {
+  created: function() {
     fetch('/engine/classes.json')
-    .then(response => response.json())
-    .then(json => {
-      this.items = json
+    .then(function(response){
+      return response.json();
     })
+    .then(function(json){
+      app.items = json;
+    });
   },
   methods: {
     click_class: function(event) {

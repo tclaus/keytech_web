@@ -20,4 +20,4 @@
 //= require bootstrap
 //= require flash_messages
 //= require add_element
-//= require vue
+//= require vue.min
