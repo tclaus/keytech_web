@@ -1,7 +1,7 @@
 
 <% if @element != nil %>
 <% # May be nil in searches %>
-  <% meta_tag :page_title, "Struktur: #{@element.displayname}" %>
+  <% meta_tag :page_title, " #{@element.displayname}" %>
 <% end %>
 
 <div class="table-responsive">
@@ -10,7 +10,9 @@
     <thead>
       <tr>
         <% @layout.controls.each do |control| %>
-          <th scope="col"><%= control.displayname %></th>
+          <th scope="col">
+            <%= sort_link control.attributeName, control.displayname %>
+          </th>
         <% end %>
       </tr>
     </thead>

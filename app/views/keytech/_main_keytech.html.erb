@@ -7,6 +7,6 @@
 <%= render 'shared/element_tabs' %>
 
 <div class="element-container">
-    <% area = request.url.split('/').last  %>
+    <% area = request.path.split('/').last  %>
     <%= render "keytech/#{area}" %>
 </div>

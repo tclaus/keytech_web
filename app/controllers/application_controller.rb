@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :set_csp
 
-
   def set_csp
     # Set all restrictions for content security
     response.headers['Content-Security-Policy'] =

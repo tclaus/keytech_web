@@ -35,12 +35,20 @@ class ElementsController < ApplicationController
     if user_signed_in?
 
       load_my_keytech
-      load_element("none") #TODO: attributes: none
+      load_element("none")
       if @element != nil
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.structure(params[:id], {"attributes":"all"})
+        @elements = keytechAPI.elements.structure(params[:id], {"attributes":"lister"})
         simplifyKeyValueList(@elements)
+        puts "Before sort"
+        print_element_list
+        sort_elements
+        puts "Sorted by #{params[:column]}"
+        print_element_list
+        #byebug
+        # keytech does not sort structures
+
       else
         flash_element_not_found
       end
@@ -60,9 +68,9 @@ class ElementsController < ApplicationController
       if @element != nil
         load_element_tabs
         load_lister_layout
-
         @elements = keytechAPI.elements.whereused(params[:id], {"attributes":"all"})
         simplifyKeyValueList(@elements)
+        sort_elements
       else
         flash_element_not_found
       end
@@ -110,6 +118,11 @@ class ElementsController < ApplicationController
         load_element_tabs
         load_bom_layout
         @elements = keytechAPI.elements.billOfMaterial(params[:id], {"attributes":"lister"})
+
+        print_element_list
+        sort_elements
+        print_element_list
+
       else
         flash_element_not_found
       end
@@ -136,9 +149,11 @@ class ElementsController < ApplicationController
 
   def search
     if user_signed_in?
+      # sortby=name desc
+      sortBy = "#{params[:column]},#{params[:direction]}"
 
       @layout = keytechAPI.layouts.global_lister_layout
-      options = {byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister"}
+      options = {byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister", sortBy: sortBy}
       @searchResponseHeader = find_element_by_search(params[:q], options)
 
       @elements = @searchResponseHeader.elementList
@@ -198,9 +213,10 @@ class ElementsController < ApplicationController
     # flash[:warning] = "Ein Element mit dieser Nummer wurde nicht gefunden"
   end
 
-  # Removes the prefix as_do__,  as_sdo__ .. from keys in keyValueList.
+  # Removes the prefix as_do__,  as_sdo__ .. from all keys in keyValueList.
+  #
   def simplifyKeyValueList(elements)
-    # remove everything till the double unerline
+    # remove everything form right to left till the double unerline
     elements.each do |element|
       element.keyValueList.transform_keys! do |key|
           index = key.index('__')
@@ -248,7 +264,7 @@ class ElementsController < ApplicationController
 
   def find_element_by_search(searchText, options)
     # Fake masses of elements?
-     keytechAPI.search.query(searchText,options)
+     keytechAPI.search.query(searchText, options)
   end
 
   # Loads the element. Can set @element to nil
@@ -259,4 +275,52 @@ class ElementsController < ApplicationController
   def keytechAPI
     current_user.keytechAPI
   end
+
+  def print_element_list
+    @elements.each do |element|
+      puts "#{element.key}"
+    end
+  end
+
+  def sort_elements
+    column = params[:column]
+    direction = params[:direction]
+
+    if direction == "desc"
+      puts "Sort desc"
+      @elements.sort!{|a,b| element_compare(column, a, b)}
+    else
+      puts "Sort asc"
+      @elements.sort!{|a,b| element_compare(column, b, a)}
+    end
+
+  end
+
+  def element_compare(column, a, b)
+    # Check well known attributes
+    if column == "created_by"
+      return a.createdByLong <=> b.createdByLong
+    end
+
+    if column == "changed_by"
+      return a.changedByLong <=> b.changedByLong
+    end
+
+    if column == "displayname"
+      return a.displayname <=> b.displayname
+    end
+
+    if column == "classname"
+      return helpers.displayNameForClass(helpers.classKey(a.key)) <=> helpers.displayNameForClass(helpers.classKey(b.key))
+    end
+
+    # Check key value
+    valueA = a.keyValueList[column]
+    valueB = b.keyValueList[column]
+    if valueA.nil? then valueA = "" end
+    if valueB.nil? then valueB = "" end
+    return  valueA <=> valueB
+
+  end
+
 end
