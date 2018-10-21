@@ -156,6 +156,9 @@ class ElementsController < ApplicationController
       options = {byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister", sortBy: sortBy}
       @searchResponseHeader = find_element_by_search(params[:q], options)
 
+      sort_groupBy_values(@searchResponseHeader.groupBy)
+
+      puts "Groups: #{@searchResponseHeader.groupBy.inspect}"
       @elements = @searchResponseHeader.elementList
       simplifyKeyValueList(@elements)
       # load in another controller?
@@ -279,6 +282,14 @@ class ElementsController < ApplicationController
   def print_element_list
     @elements.each do |element|
       puts "#{element.key}"
+    end
+  end
+
+  def sort_groupBy_values(groupByValues)
+    if groupByValues
+      puts "Sort: #{groupByValues.values.inspect}"
+      groupByValues.values = Hash[groupByValues.values.sort_by{|k,v| -v}].to_h
+      puts "Sort_after: #{groupByValues.values.inspect}"
     end
   end
 
