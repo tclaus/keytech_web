@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
     # Set all restrictions for content security
     response.headers['Content-Security-Policy'] =
       "frame-ancestors 'none';"\
-      "X-Frame-Options DENY;"\
       "default-src 'none';" \
       "script-src 'self' 'unsafe-eval' 'unsafe-inline' cdnjs.cloudflare.com;" \
       "img-src 'self' data:;" \
@@ -19,6 +18,11 @@ class ApplicationController < ActionController::Base
       "frame-src 'self' js.stripe.com;" \
       "form-action 'self';"\
       "base-uri 'self';"
+
+      response.headers['X-Content-Type-Options'] = "nosniff"
+      response.headers['X-Frame-Options'] = "DENY"
+      response.headers['X-XSS-Protection'] = "1; mode=block"
+
   end
 
   # Show hompage before logged in
