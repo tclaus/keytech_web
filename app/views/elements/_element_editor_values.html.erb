@@ -15,10 +15,10 @@
 
             <% if control.isEditable == false %>
               <span class="bg-secondary text-white">
-                (<%= control.controlType.downcase %>) <%= control.dataDictionaryID %>, <%= editorValueParser(element.keyValueList[control.attributeName]) %>
+                <%= editorValueParser(element.keyValueList[control.attributeName]) %>
               </span>
             <% else %>
-              (<%= control.controlType.downcase %>) <%= control.dataDictionaryID %>,  <%= editorValueParser(element.keyValueList[control.attributeName]) %>
+              <%= editorValueParser(element.keyValueList[control.attributeName]) %>
               <i class="far fa-edit" style="opacity:0" data-toggle="tooltip" data-placement="top" title="Bearbeiten"></i>
             <% end %>
 
