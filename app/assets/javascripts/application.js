@@ -21,3 +21,7 @@
 //= require flash_messages
 //= require add_element
 //= require vue.min
+//= require edit_mode_controller
+//= require bootstrap-datepicker
+//= require bootstrap-datepicker/core
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.de.js

@@ -1,4 +1,4 @@
-$(function () {
+$(document).ready(function(){
   $('#add_element').on('click', function (event) {
     event.preventDefault();
 

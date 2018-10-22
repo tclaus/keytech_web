@@ -1,0 +1,9 @@
+
+<%= form_tag do %>
+  <%= hidden_field_tag("elementKey", @elementKey) %>
+  <%= hidden_field_tag("attribute", @attribute) %>
+
+  <%= text_field_tag(@attribute, @field_value, class:"form-control") %>
+  <%= submit_tag("Speichern", class: "btn btn-primary btn-sm") %>
+  <%= button_tag "Abbrechen", type: "submit", name: "cancel", value: true, class: "btn btn-secondray btn-sm" %>
+<% end %>

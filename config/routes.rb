@@ -46,7 +46,9 @@ Rails.application.routes.draw do
   get 'engine/newelement', to: 'engine#show_new_element_dialog'
   post '/engine/newelement', to: 'engine#new_element'
 
-
+  # Element Value formular
+  get 'engine/value_form', to: 'engine#show_value_form'
+  post 'engine/value_form', to: 'engine#update_value_form'
 
   controller :admin do
       get 'admin' => :index

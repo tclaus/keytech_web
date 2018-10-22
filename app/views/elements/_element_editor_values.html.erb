@@ -1,0 +1,30 @@
+
+  <table class="table table-sm elementValues">
+  <tbody>
+    <% layout.controls.each do |control| %>
+      <% if control.controlType != "LABEL" %>
+        <tr>
+          <td>
+            <%= control.displayname %>
+          </td>
+          <td class="element-value" id="<%= control.attributeName%>"
+            data-attribute-type="<%= control.controlType.downcase %>"
+            data-attribute="<%= control.attributeName %>"
+            data-element-key="<%= element.key %>"
+            data-data-dictionary-id="<%= control.dataDictionaryID %>">
+
+            <% if control.isEditable == false %>
+              <span class="bg-secondary text-white">
+                (<%= control.controlType.downcase %>) <%= control.dataDictionaryID %>, <%= editorValueParser(element.keyValueList[control.attributeName]) %>
+              </span>
+            <% else %>
+              (<%= control.controlType.downcase %>) <%= control.dataDictionaryID %>,  <%= editorValueParser(element.keyValueList[control.attributeName]) %>
+              <i class="far fa-edit" style="opacity:0" data-toggle="tooltip" data-placement="top" title="Bearbeiten"></i>
+            <% end %>
+
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+  </table>

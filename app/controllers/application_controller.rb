@@ -6,8 +6,6 @@ class ApplicationController < ActionController::Base
 
   def set_csp
 
-puts "Set CSP headers"
-
     # Set all restrictions for content security
     response.headers['Content-Security-Policy'] =
       "frame-ancestors 'none';"\

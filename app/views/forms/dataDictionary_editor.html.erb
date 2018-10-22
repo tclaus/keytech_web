@@ -1,0 +1,32 @@
+<%= form_tag do %>
+  <%= hidden_field_tag("elementKey", @elementKey) %>
+  <%= hidden_field_tag("attribute", @attribute) %>
+<!-- selektion in ein hidden feld eintragen -->
+
+<div class="table-responsive-sm">
+  <table class="table table-sm table-hover">
+  <thead>
+        <tr>
+          <% @dataDefinition.each do |definition| %>
+            <th scope="col"><%= definition.displayText %></th>
+          <% end %>
+        </tr>
+  </thead>
+  <tbody>
+    <!-- Hier dynamisch laden, max X gleichzeitig, endless scrolling?? -->
+    <% @data.each do |data| %>
+    <tr>
+      <% @dataDefinition.each do |definition| %>
+      <th>
+        <%= data[definition.attribute]%>
+      </th>
+      <% end %>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+
+  <%= submit_tag("Speichern", class: "btn btn-primary btn-sm") %>
+  <%= button_tag "Abbrechen", type: "submit", name: "cancel", value: true, class: "btn btn-secondray btn-sm" %>
+<% end %>

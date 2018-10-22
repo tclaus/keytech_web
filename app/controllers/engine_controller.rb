@@ -93,7 +93,92 @@ class EngineController < ApplicationController
 
     end
 
+    def show_value_form
+      # Load element
+       @elementKey = params[:elementKey]
+       @attribute = params[:attribute]
+       @attributeType = params[:attributeType]
+       @dataDictionaryID = params[:dataDictionaryID]
+
+       @element = keytechAPI.elements.load(@elementKey, {"attributes": :all})
+       @field_value = @element.keyValueList[@attribute]
+
+       if @dataDictionaryID != "0"
+         # Load DD Field
+         @dataDefinition = getDataDictionaryDefinition(@dataDictionaryID)
+         @data = getDataDictionaryData(@dataDictionaryID)
+         render 'forms/dataDictionary_editor', layout: "attribute_form"
+         return
+       end
+
+       if @attributeType == "text"
+         render 'forms/text_editor', layout: "attribute_form"
+       end
+
+       if @attributeType == "memo"
+         render 'forms/textarea_editor', layout: "attribute_form"
+       end
+
+       if @attributeType == "double"
+         render 'forms/number_editor', layout: "attribute_form"
+       end
+
+       if @attributeType == "check"
+         render 'forms/check_editor', layout: "attribute_form"
+       end
+
+       if @attributeType == "date"
+         @field_value = helpers.editorValueParser(@field_value)
+         render 'forms/date_editor', layout: "attribute_form"
+       end
+
+    end
+
+    def update_value_form
+      if params[:cancel] == 'true'
+        redirect_back(fallback_location: root_path)
+      else
+        elementKey = params[:elementKey]
+        attribute = params[:attribute]
+        value = params[attribute]
+
+        # Nicht alle beliebige Attribute füllen!
+        # TODO: mache eine Liste mit Attribute, die nicht gehen: name, acl, alle Systematribute
+        # as_.. ??
+
+        # TODO: Validate - isNullable, type?
+
+        element = @element = keytechAPI.elements.newElement(elementKey)
+        element.keyValueList[attribute] = value
+
+        saved_element = keytechAPI.elements.update(element)
+        # Save ok? If not create a warning and rebuild
+        if saved_element.blank?
+          logger.warn("Could not update element")
+          flash[:warning] = "Konnte Element nicht aktualisieren."
+          redirect_back(fallback_location: root_path)
+          return
+        else
+          flash[:info] = "Element wurde aktualisiert."
+          redirect_to element_show_path(id:saved_element.key)
+          return
+        end
+      end
+    end
+
 private
+
+    def getDataDictionaryDefinition(ddID)
+       Rails.cache.fetch("/datadictionary/#{ddID}", expires_in: 1.hours) do
+         keytechAPI.dataDictionaries.getDefinition(ddID)
+       end
+    end
+
+    def getDataDictionaryData(ddID)
+       Rails.cache.fetch("/datadictionary/#{ddID}/data", expires_in: 1.hours) do
+         keytechAPI.dataDictionaries.getData(ddID)
+       end
+    end
 
     def getclassDefinition(classKey)
      Rails.cache.fetch("#{classKey}", expires_in: 1.hours) do

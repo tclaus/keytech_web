@@ -17,22 +17,7 @@
     <% end %>
   </div>
   <div class="col-md-9">
-    <table class="table table-sm">
-    <tbody>
-      <% @layout.controls.each do |control| %>
-        <% if control.controlType != "LABEL" %>
-          <tr>
-            <td>
-              <%=  control.displayname %>
-            </td>
-            <td>
-              <%= editorValueParser(@element.keyValueList[control.attributeName]) %>
-            </td>
-          </tr>
-        <% end %>
-      <% end %>
-    </tbody>
-  </table>
+    <%= render partial:'element_editor_values',locals: {layout: @layout, element: @element} %>
   </div>
 </div>
 
