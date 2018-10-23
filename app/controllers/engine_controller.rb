@@ -1,3 +1,4 @@
+require 'json'
 
 class EngineController < ApplicationController
   before_action :authenticate_user!
@@ -141,6 +142,8 @@ class EngineController < ApplicationController
         elementKey = params[:elementKey]
         attribute = params[:attribute]
         value = params[attribute]
+        dataDictionaryJson = params[:datadictionary]
+        dataDictionaryID = params[:datadictionary_id]
 
         # Nicht alle beliebige Attribute füllen!
         # TODO: mache eine Liste mit Attribute, die nicht gehen: name, acl, alle Systematribute
@@ -149,18 +152,28 @@ class EngineController < ApplicationController
         # TODO: Validate - isNullable, type?
 
         element = @element = keytechAPI.elements.newElement(elementKey)
-        element.keyValueList[attribute] = value
+        if dataDictionaryID.blank?
+          element.keyValueList[attribute] = value
+        else
+          dataDefinition = getDataDictionaryDefinition(dataDictionaryID)
+          dataDefinition.each do |definition|
+            if !definition.toTargetAttribute.blank?
+                dataDictionaryValues = JSON.parse(dataDictionaryJson)
+                element.keyValueList[definition.toTargetAttribute] = dataDictionaryValues[definition.attribute.to_s]
+            end
+          end
+        end
 
-        saved_element = keytechAPI.elements.update(element)
+        updated_element = keytechAPI.elements.update(element)
         # Save ok? If not create a warning and rebuild
-        if saved_element.blank?
+        if updated_element.blank?
           logger.warn("Could not update element")
           flash[:warning] = "Konnte Element nicht aktualisieren."
           redirect_back(fallback_location: root_path)
           return
         else
           flash[:info] = "Element wurde aktualisiert."
-          redirect_to element_show_path(id:saved_element.key)
+          redirect_to element_show_path(id:updated_element.key)
           return
         end
       end

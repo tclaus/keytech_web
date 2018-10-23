@@ -15,4 +15,5 @@ Rails.application.config.assets.precompile += %w(
 flash_messages
 classdefinition_filter
 check_new_element
+select_from_datadictionary
 )

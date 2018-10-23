@@ -1,6 +1,8 @@
 <%= form_tag do %>
   <%= hidden_field_tag("elementKey", @elementKey) %>
   <%= hidden_field_tag("attribute", @attribute) %>
+  <%= hidden_field_tag("datadictionary_id", @dataDictionaryID) %>
+  <input type="hidden" name="datadictionary" id="datadictionary_field" value="">
 <!-- selektion in ein hidden feld eintragen -->
 
 <div class="table-responsive-sm">
@@ -15,7 +17,7 @@
   <tbody>
     <!-- Hier dynamisch laden, max X gleichzeitig, endless scrolling?? -->
     <% @data.each do |data| %>
-    <tr>
+    <tr class='clickable-row' data-json='<%= data.to_json %>'>
       <% @dataDefinition.each do |definition| %>
       <th>
         <%= data[definition.attribute]%>
@@ -30,3 +32,5 @@
   <%= submit_tag("Speichern", class: "btn btn-primary btn-sm") %>
   <%= button_tag "Abbrechen", type: "submit", name: "cancel", value: true, class: "btn btn-secondray btn-sm" %>
 <% end %>
+
+<%= javascript_include_tag 'select_from_datadictionary' %>
