@@ -16,14 +16,19 @@ $('div .attribute-field').click(function(event){
     var elementKey = attribute_element.data("element-key");
     var dataDictionaryID = attribute_element.data("data-dictionary-id");
 
+// Hover
+    attribute_element.append('<i class="fas fa-spinner fa-pulse" id="spinner"></i>');
     $.get("/engine/value_form?elementKey=" + elementKey +
           "&attribute=" + attribute +
           "&attributeType=" + type +
           "&dataDictionaryID=" + dataDictionaryID, function(data) {
 
+      $('#spinner').remove();
+
       // Click in the icon - add form to parent
-      attribute_element.contents().remove();
+      attribute_element.contents().hide();
       attribute_element.append(data);
+
     });
   }
 });

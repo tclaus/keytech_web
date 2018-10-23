@@ -1,2 +1,12 @@
+<div id="attribute-edit-form">
+  <%= form_tag do %>
+    <%= hidden_field_tag("elementKey", @elementKey) %>
+    <%= hidden_field_tag("attribute", @attribute) %>
 
-<%= yield %>
+    <%= yield %>
+    <%= javascript_include_tag 'attribute-editor' %>
+
+    <%= submit_tag("Speichern", class: "btn btn-primary btn-sm") %>
+    <button type="button" class="btn btn-secondary btn-sm" id="cancel-attributes">Abbrechen</button>
+  <% end %>
+</div>

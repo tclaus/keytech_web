@@ -1,6 +1,10 @@
 
 .element-attributes{
 
+  .scroll-data-dictionary-table {
+    overflow: auto;
+    max-height: 250px;
+  }
   .readonly {
     background-color: lightgray;
   }
