@@ -1,0 +1,33 @@
+
+.element-attributes{
+
+  .readonly {
+    background-color: lightgray;
+  }
+
+  .pointerCursor {
+    cursor: pointer;
+  }
+
+  .clearfix::after {
+    clear: both;
+    display: table;
+  }
+
+  .attribute-field {
+
+    background-color: rgb(231, 231, 231);
+    border: 1px solid #ccc;;
+    box-shadow: inset 0 1px 3px #ddd;
+    margin: 2px;
+    border-radius: 2px;
+    padding-left: 5px;
+    padding-right: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .edit-icon {
+    float:right;
+  }
+}

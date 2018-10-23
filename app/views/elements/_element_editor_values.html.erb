@@ -1,27 +1,34 @@
 
-  <table class="table table-sm elementValues">
+  <table class="table table-sm element-attributes elementValues">
   <tbody>
     <% layout.controls.each do |control| %>
       <% if control.controlType != "LABEL" %>
         <tr>
-          <td>
+            <% if !control.isEditable %>
+              <% readonlyClass = "readonly" %>
+              <% pointerClass = "" %>
+            <% else %>
+              <% readonlyClass = "" %>
+              <% pointerClass = "pointerCursor" %>
+            <% end %>
+
+          <td class="<%= readonlyClass %>">
             <%= control.displayname %>
           </td>
-          <td class="element-value" id="<%= control.attributeName%>"
+
+          <td class="element-value <%= readonlyClass %>" id="<%= control.attributeName%>"
             data-attribute-type="<%= control.controlType.downcase %>"
             data-attribute="<%= control.attributeName %>"
             data-element-key="<%= element.key %>"
-            data-data-dictionary-id="<%= control.dataDictionaryID %>">
+            data-data-dictionary-id="<%= control.dataDictionaryID %>"
+            data-is-writable="<%= control.isEditable %>">
 
-            <% if control.isEditable == false %>
-              <span class="bg-secondary text-white">
-                <%= editorValueParser(element.keyValueList[control.attributeName]) %>
-              </span>
-            <% else %>
+            <div class="attribute-field <%= pointerClass %> clearfix">
               <%= editorValueParser(element.keyValueList[control.attributeName]) %>
-              <i class="far fa-edit" style="opacity:0" data-toggle="tooltip" data-placement="top" title="Bearbeiten"></i>
-            <% end %>
-
+              <% if control.isEditable %>
+                <i class="far fa-edit edit-icon" style="opacity:0" data-toggle="tooltip" data-placement="top" title="Bearbeiten"></i>
+              <% end %>
+            </div>
           </td>
         </tr>
       <% end %>
