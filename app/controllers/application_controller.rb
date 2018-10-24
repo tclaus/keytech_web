@@ -34,7 +34,9 @@ class ApplicationController < ActionController::Base
       if (current_user.hasValidConnection?)
         @favorites = current_user.favorites
         @queries = current_user.queries
-
+        @dashboard_elements = dashboard
+        @keytechUserName = current_user.keytech_username
+        # Load Dashboard
         render 'home'
       else
         render 'invalid_login'
@@ -45,6 +47,21 @@ class ApplicationController < ActionController::Base
       render 'landing_page'
     end
   end
+
+  def dashboard
+
+    # 2. Changed by me
+    #   changedBy = me | if createdBy == changedBy => "created by me" / Changed by me
+    #   changedAt => 7 Days
+    #   limit = 25
+
+    # 3. My elements changed by others
+    #  createdBy = me
+    # changedBy = other
+    # changed_at => 7 days
+    load_recent_changes_cached
+  end
+
 private
   # sets the localizaton from request Header
   def set_locale
@@ -76,4 +93,33 @@ private
     logger.debug "* Accept-Language from header: #{accept_language}"
     return accept_language.scan(/^[a-z]{2}/).first if accept_language
   end
+
+  def load_recent_changes_cached
+    Rails.cache.fetch("#{current_user.keytech_username}/recent_activities", expires_in: 1.minutes) do
+      load_recent_changes_from_api
+    end
+  end
+
+  # Executes query from api for recent changes
+  def load_recent_changes_from_api
+    maxElements = 5
+    username = current_user.keytech_username
+    from_date = "/Date(1537778445000)/" # in epoch
+    options = { fields: "created_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: "changed_at,desc"}
+    createdByMeResult = keytechAPI.search.query(options)
+
+    options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: "changed_at,desc"}
+    changedByMeResult = keytechAPI.search.query(options)
+
+    elementList = (createdByMeResult.elementList + changedByMeResult.elementList)
+
+    elementList.sort_by { |element| element.changedAt }
+    elementList.reverse
+
+  end
+
+  def keytechAPI
+    current_user.keytechAPI
+  end
+
 end

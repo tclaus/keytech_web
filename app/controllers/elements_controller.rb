@@ -153,8 +153,8 @@ class ElementsController < ApplicationController
       sortBy = "#{params[:column]},#{params[:direction]}"
 
       @layout = keytechAPI.layouts.global_lister_layout
-      options = {byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister", sortBy: sortBy}
-      @searchResponseHeader = find_element_by_search(params[:q], options)
+      options = {q: params[:q], byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister", sortBy: sortBy}
+      @searchResponseHeader = keytechAPI.search.query(options)
 
       sort_groupBy_values(@searchResponseHeader.groupBy)
 
@@ -263,11 +263,6 @@ class ElementsController < ApplicationController
 
   def classkey(elementKey)
     elementKey.split(':').first
-  end
-
-  def find_element_by_search(searchText, options)
-    # Fake masses of elements?
-     keytechAPI.search.query(searchText, options)
   end
 
   # Loads the element. Can set @element to nil
