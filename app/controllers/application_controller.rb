@@ -104,15 +104,16 @@ private
   def load_recent_changes_from_api
     maxElements = 5
     username = current_user.keytech_username
-    from_date = "/Date(1537778445000)/" # in epoch
+    ms_from_epoch = 7.day.ago.to_i * 1000
+    from_date = "/Date(#{ms_from_epoch})/"
     options = { fields: "created_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: "changed_at,desc"}
+
     createdByMeResult = keytechAPI.search.query(options)
 
     options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: "changed_at,desc"}
     changedByMeResult = keytechAPI.search.query(options)
 
     elementList = (createdByMeResult.elementList + changedByMeResult.elementList)
-
     elementList.sort_by { |element| element.changedAt }
     elementList.reverse
 
