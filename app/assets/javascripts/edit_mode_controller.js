@@ -34,16 +34,18 @@ $('div .attribute-field').click(function(event){
 });
 
   $("div .attribute-field").hover(function(event){
+    // Hover in
       // Wait a time
       var currentelement = this;
       clearTimeout(timing);
       timing = setTimeout(function() {
-          $(currentelement).children('i').animate({ opacity: 1 });
+          $('i.edit-icon').css("opacity", 0);
+          $(currentelement).children('i.edit-icon').animate({ opacity: 1 });
       }, 150);
     },
+    // Hover out
       function(event){
-        $(this).children('i').animate({ opacity: 0 });
-        leftElement = $(this).children('i');
+        $(this).children('i.edit-icon').animate({ opacity: 0 });
       });
 
 });

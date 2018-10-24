@@ -4,9 +4,9 @@
       // e.preventDefault();
       json = $(this).data('json');
       $('#datadictionary_field').val(JSON.stringify(json));
-$(this).siblings().removeClass('table-primary');
-$(this).addClass('table-primary');
 
+      $(this).siblings().removeClass('table-primary');
+      $(this).addClass('table-primary');
   });
 
   // Handle cancel event - restore field
