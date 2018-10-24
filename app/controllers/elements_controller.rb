@@ -41,10 +41,9 @@ class ElementsController < ApplicationController
         load_lister_layout
         @elements = keytechAPI.elements.structure(params[:id], {"attributes":"lister"})
         simplifyKeyValueList(@elements)
-        puts "Before sort"
+
         print_element_list
         sort_elements
-        puts "Sorted by #{params[:column]}"
         print_element_list
         #byebug
         # keytech does not sort structures
@@ -282,9 +281,7 @@ class ElementsController < ApplicationController
 
   def sort_groupBy_values(groupByValues)
     if groupByValues
-      puts "Sort: #{groupByValues.values.inspect}"
       groupByValues.values = Hash[groupByValues.values.sort_by{|k,v| -v}].to_h
-      puts "Sort_after: #{groupByValues.values.inspect}"
     end
   end
 
