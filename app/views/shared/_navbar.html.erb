@@ -19,15 +19,13 @@
         <div class="action" id="add_element" data-toggle="tooltip" data-placement="top" title="Neues Element anlegen"><i class="far fa-plus-square fa-2x"></i></div>
       </li>
     </ul>
-
-    <ul class="nav justify-content-end">
-      <% if (!user_signed_in?) %>
-        <li class="nav-item"><%= link_to 'Einloggen', new_user_session_path, class: "nav-link" %></li>
+    <% if (!user_signed_in?) %>
+      <div class="nav justify-content-end">
+        <%= link_to 'Einloggen', new_user_session_path, class: "nav-link" %>
         <span class="my-2">oder</span>
-        <li class="nav-item"><%= link_to 'Kostenlos Registrieren', new_user_registration_path,class: "nav-link" %></li>
-
-      <% end %>
-    </ul>
+        <%= link_to 'Kostenlos Registrieren', new_user_registration_path,class: "nav-link" %>
+      </div>
+    <% end %>
     <% if (user_signed_in?) %>
       <%= form_tag("/search", method: "get", class:"form-inline my-2 my-lg-0") do %>
         <%= text_field_tag(:q, params[:q], class: "form-control mr-sm-2") %>
