@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     put 'set_keytech_demo_server' => :set_keytech_demo_server
   end
 
+  get 'dashboard', to: 'application#dashboard'
 
   get 'search' , to: 'elements#search', as: 'search_element'
   # Element Tabs, need to match with tabs provided by keytech API

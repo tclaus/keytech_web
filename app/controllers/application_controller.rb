@@ -34,7 +34,6 @@ class ApplicationController < ActionController::Base
       if (current_user.hasValidConnection?)
         @favorites = current_user.favorites
         @queries = current_user.queries
-        @dashboard_elements = dashboard
         @keytechUserName = current_user.keytech_username
         # Load Dashboard
         render 'home'
@@ -59,7 +58,10 @@ class ApplicationController < ActionController::Base
     #  createdBy = me
     # changedBy = other
     # changed_at => 7 days
-    load_recent_changes_cached
+
+      @dashboard_elements = load_dashboard_cached
+      render :layout => false
+
   end
 
 private
@@ -94,14 +96,15 @@ private
     return accept_language.scan(/^[a-z]{2}/).first if accept_language
   end
 
-  def load_recent_changes_cached
+  def load_dashboard_cached
     Rails.cache.fetch("#{current_user.keytech_username}/recent_activities", expires_in: 1.minutes) do
-      load_recent_changes_from_api
+      load_dashboard_from_api
     end
   end
 
   # Executes query from api for recent changes
-  def load_recent_changes_from_api
+  def load_dashboard_from_api
+    puts "Loading dashboard..."
     maxElements = 5
     username = current_user.keytech_username
     ms_from_epoch = 7.day.ago.to_i * 1000
@@ -115,6 +118,7 @@ private
 
     elementList = (createdByMeResult.elementList + changedByMeResult.elementList)
     elementList.sort_by { |element| element.changedAt }
+    puts "Finished Loading dashboard."
     elementList.reverse
 
   end

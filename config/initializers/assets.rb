@@ -16,4 +16,5 @@ flash_messages
 classdefinition_filter
 check_new_element
 attribute-editor
+load_dashboard
 )
