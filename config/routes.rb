@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   # Show classlist dialog (first)
   get 'engine/new_element_class', to: 'engine#show_classes_dialog'
   get 'engine/classes', to: 'engine#show_classes'
+  get 'engine/checkserver', to: 'engine#checkserver'
 
   # Show element properties
   get 'engine/newelement', to: 'engine#show_new_element_dialog'

@@ -1,11 +1,9 @@
-
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_locale
   before_action :set_csp
 
   def set_csp
-
     # Set all restrictions for content security
     response.headers['Content-Security-Policy'] =
       "frame-ancestors 'none';"\
@@ -20,22 +18,20 @@ class ApplicationController < ActionController::Base
       "form-action 'self';"\
       "base-uri 'self';"
 
-      response.headers['X-Content-Type-Options'] = "nosniff"
-      response.headers['X-Frame-Options'] = "DENY"
-      response.headers['X-XSS-Protection'] = "1; mode=block"
-
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
   end
 
   # Show hompage before logged in
   def home
-
     if user_signed_in?
 
-      if (current_user.hasValidConnection?)
+      if current_user.hasValidConnection?
         @favorites = current_user.favorites
         @queries = current_user.queries
         @keytechUserName = current_user.keytech_username
-        # Load Dashboard
+        # Load Dashboard async in javascript
         render 'home'
       else
         render 'invalid_login'
@@ -48,7 +44,6 @@ class ApplicationController < ActionController::Base
   end
 
   def dashboard
-
     # 2. Changed by me
     #   changedBy = me | if createdBy == changedBy => "created by me" / Changed by me
     #   changedAt => 7 Days
@@ -59,12 +54,12 @@ class ApplicationController < ActionController::Base
     # changedBy = other
     # changed_at => 7 days
 
-      @dashboard_elements = load_dashboard_cached
-      render :layout => false
-
+    @dashboard_elements = load_dashboard_cached
+    render layout: false
   end
 
-private
+  private
+
   # sets the localizaton from request Header
   def set_locale
     if current_user.blank?
@@ -81,9 +76,9 @@ private
     locale = extract_locale_from_accept_language_header
     logger.debug "* Extracted Locale ID: #{locale}"
     if !locale.blank? &&
-      (locale == "de" ||
-        locale == "en")
-        locale
+       (locale == 'de' ||
+         locale == 'en')
+      locale
     else
       DEFAULT_LANGUAGE
     end
@@ -104,27 +99,25 @@ private
 
   # Executes query from api for recent changes
   def load_dashboard_from_api
-    puts "Loading dashboard..."
+    puts 'Loading dashboard...'
     maxElements = 5
     username = current_user.keytech_username
     ms_from_epoch = 7.day.ago.to_i * 1000
     from_date = "/Date(#{ms_from_epoch})/"
-    options = { fields: "created_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: "changed_at,desc"}
+    options = { fields: "created_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: 'changed_at,desc' }
 
     createdByMeResult = keytechAPI.search.query(options)
 
-    options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: "changed_at,desc"}
+    options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: 'changed_at,desc' }
     changedByMeResult = keytechAPI.search.query(options)
 
     elementList = (createdByMeResult.elementList + changedByMeResult.elementList)
-    elementList.sort_by { |element| element.changedAt }
-    puts "Finished Loading dashboard."
+    elementList.sort_by(&:changedAt)
+    puts 'Finished Loading dashboard.'
     elementList.reverse
-
   end
 
   def keytechAPI
     current_user.keytechAPI
   end
-
 end

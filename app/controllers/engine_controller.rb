@@ -179,6 +179,11 @@ class EngineController < ApplicationController
       end
     end
 
+    def checkserver
+      server_check_result = current_user.hasValidConnection?
+      render :json => {available: server_check_result}
+    end
+
 private
 
     def getDataDictionaryDefinition(ddID)

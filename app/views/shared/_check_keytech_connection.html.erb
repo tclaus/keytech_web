@@ -1,7 +1,5 @@
 
-<% if user_signed_in? && !current_user.hasValidConnection? %>
-<div class="alert alert-danger" role="alert">
+<div class="alert alert-danger collapse" role="alert" id="servercheck_failed_alert">
  keytech URL, Benutzername oder Passwort ungültig.<br>
  <%= link_to 'Setze keytech Einstellungen', keytech_settings_path %>
 </div>
-<% end %>

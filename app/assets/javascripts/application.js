@@ -20,6 +20,7 @@
 //= require bootstrap
 //= require flash_messages
 //= require add_element
+//= require check_keytech_server
 //= require vue.min
 //= require edit_mode_controller
 //= require bootstrap-datepicker
