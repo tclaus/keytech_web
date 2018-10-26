@@ -31,6 +31,7 @@ class EngineController < ApplicationController
           end
       end
 
+      response.headers['Cache-Control'] = 'public, max-age=60'
       respond_to do |format|
           format.json{
             render json: @classes

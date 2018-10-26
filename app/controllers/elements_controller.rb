@@ -178,12 +178,14 @@ class ElementsController < ApplicationController
   def thumbnail
     elementKey = params[:id]
     image = keytechAPI.elements.thumbnail(elementKey)
+    response.headers['Cache-Control'] = 'public, max-age=86400'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def preview
     elementKey = params[:id]
     image = keytechAPI.elements.preview(elementKey)
+    response.headers['Cache-Control'] = 'public, max-age=86400'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
@@ -324,6 +326,19 @@ class ElementsController < ApplicationController
     if valueB.nil? then valueB = "" end
     return  valueA <=> valueB
 
+  end
+
+  def dateParser(dateString)
+    # /Date(-3600000)/
+    # /Date(1407103200000)/
+
+    # get numeric value
+    numeric_value = dateString[6..-3].to_i
+    # Placeholder for empty date
+    if numeric_value == -3600000 || numeric_value == 0
+      return ""
+    end
+    Time.at(numeric_value / 1000)
   end
 
 end

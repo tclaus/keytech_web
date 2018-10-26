@@ -1,4 +1,5 @@
-$(document).ready(function(){
+
+$(document).on('turbolinks:load',function(){
   $('#add_element').on('click', function (event) {
     event.preventDefault();
 
@@ -17,6 +18,5 @@ $(document).ready(function(){
           $('#modal').remove();
       });
     });
-
   });
 });
