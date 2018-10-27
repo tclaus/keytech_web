@@ -11,7 +11,7 @@ class EngineController < ApplicationController
   # returns a json with full classlist
   #
   def show_classes
-    classes = Rails.cache.fetch('allClasses', expires_in: 1.hours) do
+    classes = Rails.cache.fetch("#{current_user.cache_key}/allClasses", expires_in: 1.hours) do
       keytechAPI.classes.loadAllClasses
     end
 
@@ -25,7 +25,7 @@ class EngineController < ApplicationController
                   elementClass.classKey.ends_with?('_XL') ||
                   elementClass.classKey.ends_with?('_PRJ')
 
-      if !elementClass.classKey.starts_with?('DEFAULT') && elementClass.isActive == true
+      if !elementClass.classKey.starts_with?('DEFAULT') && elementClass.isActive
         @classes.push elementClass
       end
     end
@@ -73,7 +73,6 @@ class EngineController < ApplicationController
       puts "Errors occured: #{errors.inspect}"
       flash[:warning] = errors
       redirect_back(fallback_location: root_path)
-      return
     end
 
     saved_element = keytechAPI.elements.save(element)
@@ -82,11 +81,9 @@ class EngineController < ApplicationController
       logger.warn('Could not save element')
       flash[:warning] = 'Konnte Element nicht anlegen.'
       redirect_back(fallback_location: root_path)
-      return
     else
       flash[:info] = 'Element wurde angelegt.'
       redirect_to show_element_path(id: saved_element.key)
-      return
     end
   end
 
@@ -97,7 +94,7 @@ class EngineController < ApplicationController
     @attributeType = params[:attributeType]
     @dataDictionaryID = params[:dataDictionaryID]
 
-    @element = keytechAPI.elements.load(@elementKey, "attributes": :all)
+    @element = keytechAPI.elements.load(@elementKey, attributes: 'all')
     @field_value = @element.keyValueList[@attribute]
 
     if @dataDictionaryID != '0'
@@ -166,11 +163,9 @@ class EngineController < ApplicationController
         logger.warn('Could not update element')
         flash[:warning] = 'Konnte Element nicht aktualisieren.'
         redirect_back(fallback_location: root_path)
-        return
       else
         flash[:info] = 'Element wurde aktualisiert.'
         redirect_to show_element_path(id: updated_element.key)
-        return
       end
     end
   end
@@ -183,25 +178,25 @@ class EngineController < ApplicationController
   private
 
   def getDataDictionaryDefinition(ddID)
-    Rails.cache.fetch("/datadictionary/#{ddID}", expires_in: 1.hours) do
+    Rails.cache.fetch("#{current_user.cache_key}/datadictionary/#{ddID}", expires_in: 1.hours) do
       keytechAPI.dataDictionaries.getDefinition(ddID)
     end
   end
 
   def getDataDictionaryData(ddID)
-    Rails.cache.fetch("/datadictionary/#{ddID}/data", expires_in: 1.hours) do
+    Rails.cache.fetch("#{current_user.cache_key}/datadictionary/#{ddID}/data", expires_in: 1.hours) do
       keytechAPI.dataDictionaries.getData(ddID)
     end
   end
 
   def getclassDefinition(classKey)
-    Rails.cache.fetch(classKey.to_s, expires_in: 1.hours) do
+    Rails.cache.fetch("#{current_user.cache_key}/#{classKey.to_s}", expires_in: 1.hours) do
       keytechAPI.classes.load(classKey)
     end
   end
 
   def getLayout(classKey)
-    Rails.cache.fetch("#{classKey}/main_layout", expires_in: 1.hours) do
+    Rails.cache.fetch("#{current_user.cache_key}/#{classKey}/main_layout", expires_in: 1.hours) do
       keytechAPI.layouts.main_layout(classKey)
     end
   end

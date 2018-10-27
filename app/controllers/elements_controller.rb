@@ -38,7 +38,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.structure(params[:id], attributes => 'lister')
+        @elements = keytechAPI.elements.structure(params[:id], attributes: 'lister')
         simplifyKeyValueList(@elements)
 
         print_element_list
@@ -66,7 +66,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.whereused(params[:id], attributes => 'all')
+        @elements = keytechAPI.elements.whereused(params[:id], attributes: 'all')
         simplifyKeyValueList(@elements)
         sort_elements
       else
@@ -131,7 +131,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_bom_layout
-        @elements = keytechAPI.elements.billOfMaterial(params[:id], attributes => 'lister')
+        @elements = keytechAPI.elements.billOfMaterial(params[:id], attributes: 'lister')
 
         print_element_list
         sort_elements
@@ -199,7 +199,7 @@ class ElementsController < ApplicationController
   def destroy
     if user_signed_in?
       # rescue where used, if any
-      whereused = keytechAPI.elements.whereused(params[:id], {attributes => 'none'})
+      whereused = keytechAPI.elements.whereused(params[:id], {attributes: 'none'})
 
       result = keytechAPI.elements.delete(params[:id])
       if result.success?
@@ -246,19 +246,19 @@ class ElementsController < ApplicationController
   end
 
   def load_lister_layout
-    @layout = Rails.cache.fetch('global_lister_layout', expires_in: 1.hours) do
+    @layout = Rails.cache.fetch("#{current_user.cache_key}/global_lister_layout", expires_in: 1.hours) do
       keytechAPI.layouts.global_lister_layout
     end
   end
 
   def load_bom_layout
-    @layout = Rails.cache.fetch('bom_lister_layout', expires_in: 1.hours) do
+    @layout = Rails.cache.fetch("#{current_user.cache_key}/bom_lister_layout", expires_in: 1.hours) do
       keytechAPI.layouts.bom_lister_layout
     end
   end
 
   def load_element_tabs
-    @subareas = Rails.cache.fetch("#{@element.key}/subareas", expires_in: 1.hours) do
+    @subareas = Rails.cache.fetch("#{current_user.cache_key}/#{@element.key}/subareas", expires_in: 1.hours) do
       @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
     end
 

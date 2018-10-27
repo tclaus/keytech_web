@@ -42,13 +42,13 @@ class User < ApplicationRecord
   end
 
   def favorites
-    Rails.cache.fetch("#{key}/favorites", expires_in: 3.minute) do
+    Rails.cache.fetch("#{cache_key}/favorites", expires_in: 3.minute) do
       keytechAPI.currentUser.favorites
     end
   end
 
   def queries
-    Rails.cache.fetch("#{key}/queries", expires_in: 3.minute) do
+    Rails.cache.fetch("#{cache_key}/queries", expires_in: 3.minute) do
       keytechAPI.currentUser.queries(withSystemQueries: 'all', ignoreTypes: 'attributes')
     end
   end
@@ -65,11 +65,11 @@ class User < ApplicationRecord
     email == ENV['ADMIN_MAIL']
   end
 
-  private
-
-  def key
+  def cache_key
     "#{keytech_username}@#{keytech_url}"
   end
+
+  private
 
   def encryptValues
     self.keytech_url = encrypt(keytech_url)

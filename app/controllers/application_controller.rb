@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
   end
 
   def load_dashboard_cached
-    Rails.cache.fetch("#{current_user.keytech_username}/recent_activities", expires_in: 1.minutes) do
+    Rails.cache.fetch("#{current_user.cache_key}/recent_activities", expires_in: 1.minutes) do
       load_dashboard_from_api
     end
   end
