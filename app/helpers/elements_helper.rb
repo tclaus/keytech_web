@@ -1,9 +1,7 @@
-
 module ElementsHelper
-
   def displayNameForClass(classKey)
-    if classKey.downcase == "default_mi"
-      return "Artikel" #todo translate
+    if classKey.casecmp('default_mi').zero?
+      return 'Artikel' # TODO: translate
     end
 
     Rails.cache.fetch("#{classKey}/displayname", expires_in: 12.hours) do
@@ -20,15 +18,11 @@ module ElementsHelper
   # Returns a String value of "DO","MI" or "FD" to indicate that the elementkey refers to a Document, MasterItem or is a Folder
   def classType(elementKey)
     classKey = self.classKey(elementKey)
-    if classKey.upcase.end_with?("_MI")
-      return "MI"
-    end
+    return 'MI' if classKey.upcase.end_with?('_MI')
 
-    if classKey.end_with?("_FD") || classKey.end_with?("_WF")
-      return "FD"
-    end
+    return 'FD' if classKey.end_with?('_FD', '_WF')
 
-    return "DO"
+    'DO'
   end
 
   def editorValueParser(value)
@@ -37,21 +31,14 @@ module ElementsHelper
 
   # Translates a value to a nice visible value
   def listerValueParser(element, attribute_name)
-
     # Check well known attributes
-    if attribute_name == "created_by"
-      return element.createdByLong
-    end
+    return element.createdByLong if attribute_name == 'created_by'
 
-    if attribute_name == "changed_by"
-      return element.changedByLong
-    end
+    return element.changedByLong if attribute_name == 'changed_by'
 
-    if attribute_name == "displayname"
-      return element.displayname
-    end
+    return element.displayname if attribute_name == 'displayname'
 
-    if attribute_name == "classname"
+    if attribute_name == 'classname'
       return displayNameForClass(classKey(element.key))
     end
 
@@ -61,16 +48,12 @@ module ElementsHelper
     parseValue(value)
   end
 
-  def findValue()
-  end
-
+  def findValue; end
 
   def parseValue(value)
-    #{/Date(-3600000)/ => "-"
+    # {/Date(-3600000)/ => "-"
     if value.is_a? String
-      if value.downcase.starts_with?('/date')
-        return dateParser(value)
-      end
+      return dateParser(value) if value.downcase.starts_with?('/date')
     end
 
     if value.is_a? String
@@ -80,7 +63,7 @@ module ElementsHelper
     end
   end
 
- # Returns a german localized datetime
+  # Returns a german localized datetime
   def dateParser(dateString)
     # /Date(-3600000)/
     # /Date(1407103200000)/
@@ -88,11 +71,9 @@ module ElementsHelper
     # get numeric value
     numeric_value = dateString[6..-3].to_i
     # Placeholder for empty date
-    if numeric_value == -3600000 || numeric_value == 0
-      return ""
-    end
-    date = Time.at(numeric_value / 1000)
-    date.strftime("%d.%m.%Y")
-  end
+    return '' if numeric_value == -3_600_000 || numeric_value == 0
 
+    date = Time.at(numeric_value / 1000)
+    date.strftime('%d.%m.%Y')
+  end
 end

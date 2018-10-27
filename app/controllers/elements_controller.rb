@@ -4,7 +4,7 @@ class ElementsController < ApplicationController
   # GET /elements, need a query for index
   # GET /users.json
   def index
-    logger.info "Index of elements"
+    logger.info 'Index of elements'
   end
 
   # Show single Element
@@ -14,7 +14,7 @@ class ElementsController < ApplicationController
 
       load_my_keytech
       load_element
-      if @element != nil
+      if !@element.nil?
         load_element_tabs
         @layout = keytechAPI.layouts.main_layout(
           classkey(@element.key)
@@ -30,22 +30,21 @@ class ElementsController < ApplicationController
 
   # Show structured Links
   def show_links
-
     # redirect to a view
     if user_signed_in?
 
       load_my_keytech
-      load_element("none")
-      if @element != nil
+      load_element('none')
+      if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.structure(params[:id], {"attributes":"lister"})
+        @elements = keytechAPI.elements.structure(params[:id], "attributes": 'lister')
         simplifyKeyValueList(@elements)
 
         print_element_list
         sort_elements
         print_element_list
-        #byebug
+        # byebug
         # keytech does not sort structures
 
       else
@@ -63,11 +62,11 @@ class ElementsController < ApplicationController
     if user_signed_in?
       # Add favorites and qieries
       load_my_keytech
-      load_element("none")
-      if @element != nil
+      load_element('none')
+      if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.whereused(params[:id], {"attributes":"all"})
+        @elements = keytechAPI.elements.whereused(params[:id], "attributes": 'all')
         simplifyKeyValueList(@elements)
         sort_elements
       else
@@ -83,24 +82,23 @@ class ElementsController < ApplicationController
     # redirect to a view
     if user_signed_in?
       load_my_keytech
-      load_element("none")
-      if @element != nil
+      load_element('none')
+      if !@element.nil?
         load_element_tabs
         @notes = keytechAPI.notes.load(@element.key)
       else
         flash_element_not_found
       end
-        render 'application/home'
+      render 'application/home'
     else
       render 'application/landing_page'
     end
   end
 
   def show_status
-
     load_my_keytech
-    load_element("none")
-    if @element != nil
+    load_element('none')
+    if !@element.nil?
       load_element_tabs
     else
       flash_element_not_found
@@ -112,11 +110,11 @@ class ElementsController < ApplicationController
     # redirect to a view
     if user_signed_in?
       load_my_keytech
-      load_element("none")
-      if @element != nil
+      load_element('none')
+      if !@element.nil?
         load_element_tabs
         load_bom_layout
-        @elements = keytechAPI.elements.billOfMaterial(params[:id], {"attributes":"lister"})
+        @elements = keytechAPI.elements.billOfMaterial(params[:id], "attributes": 'lister')
 
         print_element_list
         sort_elements
@@ -133,11 +131,10 @@ class ElementsController < ApplicationController
   end
 
   def show_messages
-
-    load_element("none")
+    load_element('none')
     load_my_keytech
 
-    if @element != nil
+    if !@element.nil?
       load_element_tabs
     else
       flash_element_not_found
@@ -152,7 +149,7 @@ class ElementsController < ApplicationController
       sortBy = "#{params[:column]},#{params[:direction]}"
 
       @layout = keytechAPI.layouts.global_lister_layout
-      options = {q: params[:q], byQuery: params[:byquery], groupBy:"classkey", classes: params[:classes], attributes:"lister", sortBy: sortBy}
+      options = { q: params[:q], byQuery: params[:byquery], groupBy: 'classkey', classes: params[:classes], attributes: 'lister', sortBy: sortBy }
       @searchResponseHeader = keytechAPI.search.query(options)
 
       sort_groupBy_values(@searchResponseHeader.groupBy)
@@ -192,14 +189,14 @@ class ElementsController < ApplicationController
   def destroy
     if user_signed_in?
       # rescue where used, if any
-      whereused = keytechAPI.elements.whereused(params[:id], {"attributes":"none"})
+      whereused = keytechAPI.elements.whereused(params[:id], "attributes": 'none')
 
       result = keytechAPI.elements.delete(params[:id])
       if result.success?
-        flash[:info] = "Element wurde gelöscht."
+        flash[:info] = 'Element wurde gelöscht.'
       else
-        logger.warn "Element #{params[:id]} can not be deleted. Server message: '#{result.headers["x-errordescription"]}'"
-        flash[:error] = "Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen."
+        logger.warn "Element #{params[:id]} can not be deleted. Server message: '#{result.headers['x-errordescription']}'"
+        flash[:error] = 'Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen.'
       end
     end
 
@@ -223,14 +220,13 @@ class ElementsController < ApplicationController
     # remove everything form right to left till the double unerline
     elements.each do |element|
       element.keyValueList.transform_keys! do |key|
-          index = key.index('__')
-          if index != nil
-            key.slice(index + 2,key.length)
-          else
-            key
-          end
+        index = key.index('__')
+        if !index.nil?
+          key.slice(index + 2, key.length)
+        else
+          key
+        end
       end
-
     end
   end
 
@@ -240,20 +236,20 @@ class ElementsController < ApplicationController
   end
 
   def load_lister_layout
-    @layout = Rails.cache.fetch("global_lister_layout", expires_in: 1.hours) do
+    @layout = Rails.cache.fetch('global_lister_layout', expires_in: 1.hours) do
       keytechAPI.layouts.global_lister_layout
     end
   end
 
   def load_bom_layout
-    @layout = Rails.cache.fetch("bom_lister_layout", expires_in: 1.hours) do
+    @layout = Rails.cache.fetch('bom_lister_layout', expires_in: 1.hours) do
       keytechAPI.layouts.bom_lister_layout
     end
   end
 
   def load_element_tabs
     @subareas = Rails.cache.fetch("#{@element.key}/subareas", expires_in: 1.hours) do
-        @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
+      @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
     end
 
     @hasMasterfile = keytechAPI.files.hasMasterfile(@element.key)
@@ -267,8 +263,8 @@ class ElementsController < ApplicationController
   end
 
   # Loads the element. Can set @element to nil
-  def load_element(attributes = "all")
-    @element = keytechAPI.elements.load(params[:id], {"attributes":  attributes})
+  def load_element(attributes = 'all')
+    @element = keytechAPI.elements.load(params[:id], "attributes": attributes)
   end
 
   def keytechAPI
@@ -277,13 +273,13 @@ class ElementsController < ApplicationController
 
   def print_element_list
     @elements.each do |element|
-      puts "#{element.key}"
+      puts element.key.to_s
     end
   end
 
   def sort_groupBy_values(groupByValues)
     if groupByValues
-      groupByValues.values = Hash[groupByValues.values.sort_by{|k,v| -v}].to_h
+      groupByValues.values = Hash[groupByValues.values.sort_by { |_k, v| -v }].to_h
     end
   end
 
@@ -291,41 +287,33 @@ class ElementsController < ApplicationController
     column = params[:column]
     direction = params[:direction]
 
-    if direction == "desc"
-      puts "Sort desc"
-      @elements.sort!{|a,b| element_compare(column, a, b)}
+    if direction == 'desc'
+      puts 'Sort desc'
+      @elements.sort! { |a, b| element_compare(column, a, b) }
     else
-      puts "Sort asc"
-      @elements.sort!{|a,b| element_compare(column, b, a)}
+      puts 'Sort asc'
+      @elements.sort! { |a, b| element_compare(column, b, a) }
     end
-
   end
 
   def element_compare(column, a, b)
     # Check well known attributes
-    if column == "created_by"
-      return a.createdByLong <=> b.createdByLong
-    end
+    return a.createdByLong <=> b.createdByLong if column == 'created_by'
 
-    if column == "changed_by"
-      return a.changedByLong <=> b.changedByLong
-    end
+    return a.changedByLong <=> b.changedByLong if column == 'changed_by'
 
-    if column == "displayname"
-      return a.displayname <=> b.displayname
-    end
+    return a.displayname <=> b.displayname if column == 'displayname'
 
-    if column == "classname"
+    if column == 'classname'
       return helpers.displayNameForClass(helpers.classKey(a.key)) <=> helpers.displayNameForClass(helpers.classKey(b.key))
     end
 
     # Check key value
     valueA = a.keyValueList[column]
     valueB = b.keyValueList[column]
-    if valueA.nil? then valueA = "" end
-    if valueB.nil? then valueB = "" end
-    return  valueA <=> valueB
-
+    valueA = '' if valueA.nil?
+    valueB = '' if valueB.nil?
+    valueA <=> valueB
   end
 
   def dateParser(dateString)
@@ -335,10 +323,8 @@ class ElementsController < ApplicationController
     # get numeric value
     numeric_value = dateString[6..-3].to_i
     # Placeholder for empty date
-    if numeric_value == -3600000 || numeric_value == 0
-      return ""
-    end
+    return '' if numeric_value == -3_600_000 || numeric_value == 0
+
     Time.at(numeric_value / 1000)
   end
-
 end

@@ -9,8 +9,7 @@ class UsersController < ApplicationController
 
   # GET /users/1
   # GET /users/1.json
-  def show
-  end
+  def show; end
 
   # GET /users/new
   def new
@@ -18,11 +17,9 @@ class UsersController < ApplicationController
   end
 
   # GET /users/1/edit
-  def edit
-  end
+  def edit; end
 
-  def edit_keytech_settings
-  end
+  def edit_keytech_settings; end
 
   def update_keytech_settings
     puts "Update settings #{params}"
@@ -32,13 +29,12 @@ class UsersController < ApplicationController
     else
       redirect_to keytech_settings_path, notice: 'Gespeichert'
     end
-
   end
 
   def set_keytech_demo_server
-    current_user.keytech_url = ENV["KEYTECH_URL"]
-    current_user.keytech_username = ENV["KEYTECH_USERNAME"]
-    current_user.keytech_password = ENV["KEYTECH_PASSWORD"]
+    current_user.keytech_url = ENV['KEYTECH_URL']
+    current_user.keytech_username = ENV['KEYTECH_USERNAME']
+    current_user.keytech_password = ENV['KEYTECH_PASSWORD']
     current_user.save
 
     redirect_to keytech_settings_path
@@ -48,7 +44,7 @@ class UsersController < ApplicationController
   def destroy
     user = User.find(params[:id])
     if user.id == current_user.id
-      flash[:alert] = "Sie können sich nicht selber löschen"
+      flash[:alert] = 'Sie können sich nicht selber löschen'
     else
       user.destroy
     end
@@ -58,12 +54,12 @@ class UsersController < ApplicationController
 
   private
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def keytech_params
-        params.require(:user).permit(:keytech_url, :keytech_username, :keytech_password)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def keytech_params
+    params.require(:user).permit(:keytech_url, :keytech_username, :keytech_password)
+  end
 
-    def user_params
-      params.require(:user).permit(:name, :email)
-    end
+  def user_params
+    params.require(:user).permit(:name, :email)
+  end
 end

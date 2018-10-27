@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-# For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'application#home'
 
   devise_for :users,
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
                            edit: 'profile',
                            sign_up: 'registration' }
 
-  resources :users, only: [:show, :destroy]
+  resources :users, only: %i[show destroy]
   controller :users do
     get 'keytech_settings' => :edit_keytech_settings
     put 'keytech_settings' => :update_keytech_settings
@@ -18,12 +18,12 @@ Rails.application.routes.draw do
 
   get 'dashboard', to: 'application#dashboard'
 
-  get 'search' , to: 'elements#search', as: 'search_element'
+  get 'search', to: 'elements#search', as: 'search_element'
   # Element Tabs, need to match with tabs provided by keytech API
   resources :elements, only: [:destroy]
-# TODO: Show auf "Show_element" gehen lasen?
+  # TODO: Show auf "Show_element" gehen lasen?
 
- # TODO: Hier den Controller - Trick anwenden?
+  # TODO: Hier den Controller - Trick anwenden?
   get 'element/:id/editor', to: 'elements#show_editor', as: 'element_show'
   get 'element/:id/links', to: 'elements#show_links'
   get 'element/:id/whereused', to: 'elements#show_whereused'
@@ -53,7 +53,6 @@ Rails.application.routes.draw do
   post 'engine/value_form', to: 'engine#update_value_form'
 
   controller :admin do
-      get 'admin' => :index
-    end
-
+    get 'admin' => :index
+  end
 end

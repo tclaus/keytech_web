@@ -16,6 +16,5 @@ module KeytechWeb
     # -- all .rb files in that directory are automatically loaded.
 
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
-    
   end
 end

@@ -1,5 +1,4 @@
 module ApplicationHelper
-
   # default page title
   def page_title
     'PLM-Web'
@@ -15,22 +14,21 @@ module ApplicationHelper
   end
 
   def sort_column
-     params[:column]
+    params[:column]
   end
 
   def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
   end
 
   # Sort links for tables
   def sort_link(column, title = nil)
     title ||= column.titleize
-    direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
-    icon = sort_direction == "asc" ? "fas fa-caret-up" : "fas fa-caret-down"
-    icon = column == sort_column ? icon : ""
+    direction = column == sort_column && sort_direction == 'asc' ? 'desc' : 'asc'
+    icon = sort_direction == 'asc' ? 'fas fa-caret-up' : 'fas fa-caret-down'
+    icon = column == sort_column ? icon : ''
 
     parameter = params.permit(:id, :q, :classes, :byquery, :column, :direction).merge(column: column, direction: direction)
     link_to "#{title} <i class='#{icon}'></i>".html_safe,  parameter
   end
-
 end
