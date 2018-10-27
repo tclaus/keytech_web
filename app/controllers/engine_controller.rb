@@ -85,7 +85,7 @@ class EngineController < ApplicationController
       return
     else
       flash[:info] = 'Element wurde angelegt.'
-      redirect_to element_show_path(id: saved_element.key)
+      redirect_to show_element_path(id: saved_element.key)
       return
     end
   end
@@ -169,7 +169,7 @@ class EngineController < ApplicationController
         return
       else
         flash[:info] = 'Element wurde aktualisiert.'
-        redirect_to element_show_path(id: updated_element.key)
+        redirect_to show_element_path(id: updated_element.key)
         return
       end
     end

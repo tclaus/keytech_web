@@ -258,13 +258,16 @@ class ElementsController < ApplicationController
     end
   end
 
-  def classkey(elementKey)
-    elementKey.split(':').first
+  def classkey(element_key)
+    element_key.split(':').first
   end
 
   # Loads the element. Can set @element to nil
   def load_element(attributes = 'all')
-    @element = keytechAPI.elements.load(params[:id], "attributes": attributes)
+    # If ID.startWith BOM - then load Article (default_mi)
+    element_key = params[:id]
+
+    @element = keytechAPI.elements.load(element_key, "attributes": attributes)
   end
 
   def keytechAPI

@@ -16,7 +16,7 @@
         <tr>
           <% @layout.controls.each do |control| %>
           <td>
-            <%= render partial:'table_cell',locals: {control: control, element: element} %>
+            <%= render partial:'bom_table_cell',locals: {control: control, element: element} %>
           </td>
           <% end %>
         </tr>
