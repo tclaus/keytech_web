@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   get 'element/:id/notes', to: 'elements#show_notes'
   get 'element/:id/files', to: 'elements#show'
   get 'element/:id/status', to: 'elements#show_status'
-  get 'element/:id/messages', to: 'elements#show_messages'
+  get 'element/:id/messages', to: 'elements#show_mails'
   get 'element/:id/billofmaterial', to: 'elements#show_bom'
 
   get 'element/:id/preview', to: 'elements#preview', as: 'preview_element'

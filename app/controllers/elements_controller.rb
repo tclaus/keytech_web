@@ -38,7 +38,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.structure(params[:id], "attributes": 'lister')
+        @elements = keytechAPI.elements.structure(params[:id], attributes => 'lister')
         simplifyKeyValueList(@elements)
 
         print_element_list
@@ -66,7 +66,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.whereused(params[:id], "attributes": 'all')
+        @elements = keytechAPI.elements.whereused(params[:id], attributes => 'all')
         simplifyKeyValueList(@elements)
         sort_elements
       else
@@ -95,6 +95,23 @@ class ElementsController < ApplicationController
     end
   end
 
+  def show_mails
+    # redirect to a view
+    if user_signed_in?
+      load_my_keytech
+      load_element('none')
+      if !@element.nil?
+        load_element_tabs
+        @mails = keytechAPI.elements.mails(@element.key)
+      else
+        flash_element_not_found
+      end
+      render 'application/home'
+    else
+      render 'application/landing_page'
+    end
+  end
+
   def show_status
     load_my_keytech
     load_element('none')
@@ -114,7 +131,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_bom_layout
-        @elements = keytechAPI.elements.billOfMaterial(params[:id], "attributes": 'lister')
+        @elements = keytechAPI.elements.billOfMaterial(params[:id], attributes => 'lister')
 
         print_element_list
         sort_elements
@@ -130,26 +147,19 @@ class ElementsController < ApplicationController
     end
   end
 
-  def show_messages
-    load_element('none')
-    load_my_keytech
-
-    if !@element.nil?
-      load_element_tabs
-    else
-      flash_element_not_found
-    end
-
-    render 'application/home'
-  end
-
   def search
     if user_signed_in?
       # sortby=name desc
-      sortBy = "#{params[:column]},#{params[:direction]}"
+      sort_by = "#{params[:column]},#{params[:direction]}"
 
-      @layout = keytechAPI.layouts.global_lister_layout
-      options = { q: params[:q], byQuery: params[:byquery], groupBy: 'classkey', classes: params[:classes], attributes: 'lister', sortBy: sortBy }
+      @layout = load_lister_layout
+      options =    { q: params[:q],
+               byQuery: params[:byquery],
+               groupBy: 'classkey',
+               classes: params[:classes],
+            attributes: 'lister',
+                sortBy: sort_by }
+
       @searchResponseHeader = keytechAPI.search.query(options)
 
       sort_groupBy_values(@searchResponseHeader.groupBy)
@@ -189,14 +199,14 @@ class ElementsController < ApplicationController
   def destroy
     if user_signed_in?
       # rescue where used, if any
-      whereused = keytechAPI.elements.whereused(params[:id], "attributes": 'none')
+      whereused = keytechAPI.elements.whereused(params[:id], {attributes => 'none'})
 
       result = keytechAPI.elements.delete(params[:id])
       if result.success?
-        flash[:info] = 'Element wurde gelöscht.'
+        flash[:info] = "Element wurde gelöscht."
       else
         logger.warn "Element #{params[:id]} can not be deleted. Server message: '#{result.headers['x-errordescription']}'"
-        flash[:error] = 'Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen.'
+        flash[:error] = "Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen."
       end
     end
 
@@ -267,7 +277,7 @@ class ElementsController < ApplicationController
     # If ID.startWith BOM - then load Article (default_mi)
     element_key = params[:id]
 
-    @element = keytechAPI.elements.load(element_key, "attributes": attributes)
+    @element = keytechAPI.elements.load(element_key, attributes: attributes)
   end
 
   def keytechAPI
@@ -280,10 +290,8 @@ class ElementsController < ApplicationController
     end
   end
 
-  def sort_groupBy_values(groupByValues)
-    if groupByValues
-      groupByValues.values = Hash[groupByValues.values.sort_by { |_k, v| -v }].to_h
-    end
+  def sort_groupBy_values(group_by)
+    return Hash[group_by.values.sort_by { |_k, v| -v }].to_h unless !group_by.nil?
   end
 
   def sort_elements
@@ -326,7 +334,7 @@ class ElementsController < ApplicationController
     # get numeric value
     numeric_value = dateString[6..-3].to_i
     # Placeholder for empty date
-    return '' if numeric_value == -3_600_000 || numeric_value == 0
+    return '' if numeric_value == -3_600_000 || numeric_value.zero?
 
     Time.at(numeric_value / 1000)
   end
