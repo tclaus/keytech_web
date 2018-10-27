@@ -112,8 +112,8 @@ class ApplicationController < ActionController::Base
     changedByMeResult = keytechAPI.search.query(options)
 
     elementList = (createdByMeResult.elementList + changedByMeResult.elementList)
-    elementList.sort_by(&:changedAt)
-    puts 'Finished Loading dashboard.'
+    puts 'Finished loading dashboard'
+    elementList.sort_by!(&:changedAt)
     elementList.reverse
   end
 

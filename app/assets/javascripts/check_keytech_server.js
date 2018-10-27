@@ -3,8 +3,7 @@ $.ajax({
     url: "/engine/checkserver",
     cache: false,
     success: function(response){
-      // $("#dashboard").empty();
-      // $("#dashboard").append(html);
+      
       console.log('keytech server checked');
       if (response.available == true) {
         // Server OK

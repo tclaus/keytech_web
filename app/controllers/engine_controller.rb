@@ -16,7 +16,7 @@ class EngineController < ApplicationController
          keytechAPI.classes.loadAllClasses
       end
 
-      #Filter only to files, office file and folders
+      #Filter only to files, office file and folders, ignore all CAD-related  types
       @classes  = []
       classes.each do |elementClass|
           if (elementClass.classKey.ends_with?("_WF") ||
@@ -109,6 +109,7 @@ class EngineController < ApplicationController
          # Load DD Field
          @dataDefinition = getDataDictionaryDefinition(@dataDictionaryID)
          @data = getDataDictionaryData(@dataDictionaryID)
+         response.headers['Cache-Control'] = 'public, max-age=3600'
          render 'forms/dataDictionary_editor', layout: "attribute_form"
          return
        end
