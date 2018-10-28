@@ -118,6 +118,10 @@ class EngineController < ApplicationController
       render 'forms/number_editor', layout: 'attribute_form'
     end
 
+    if @attributeType == 'integer'
+      render 'forms/integer_editor', layout: 'attribute_form'
+    end
+
     if @attributeType == 'check'
       render 'forms/check_editor', layout: 'attribute_form'
     end
