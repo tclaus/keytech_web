@@ -52,6 +52,8 @@ Rails.application.routes.draw do
   get 'engine/value_form', to: 'engine#show_value_form'
   post 'engine/value_form', to: 'engine#update_value_form'
 
+  post 'files', to: 'fileupload#file_upload'
+
   controller :admin do
     get 'admin' => :index
   end

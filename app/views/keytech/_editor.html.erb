@@ -9,12 +9,30 @@
     <% if @hasMasterfile %>
       <%= link_to masterfile_element_path do %>
 
-        <div class="masterfile_name"> <i class="fas fa-file-download"></i> &nbsp;<%= @masterfileInfo.fileName %></div>
-        <div class="secondary_fileInfo">
+        <div id="filename" class="masterfile_name"> <i class="fas fa-file-download"></i> &nbsp;<%= @masterfileInfo.fileName %></div>
+        <div id="filesize" class="secondary_fileInfo">
           <%= number_to_human_size(@masterfileInfo.fileSize) %>
         </div>
       <% end %>
+    <% else %>
+      <div id="filename" class="masterfile_name">Keine Datei vorhanden</div>
     <% end %>
+    <%= form_tag do %>
+      <%= hidden_field_tag(:elementKey, @element.key) %>
+
+      <span class="btn btn-success fileinput-button">
+          <i class="glyphicon glyphicon-plus"></i>
+          <span>Datei hinzufügen</span>
+          <input id="fileupload" type="file" name="files">
+      </span>
+    <% end %>
+      <!-- The global progress bar -->
+      <div id="progress">
+        <div class="bar" style="width: 0%;"></div>
+      </div>
+      <!-- The container for the uploaded files -->
+      <div id="files" class="files"></div>
+      <br>
   </div>
   <div class="col-md-9">
     <%= render partial:'element_editor_values',locals: {layout: @layout, element: @element} %>

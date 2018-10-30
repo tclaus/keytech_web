@@ -23,6 +23,11 @@
 //= require check_keytech_server
 //= require vue.min
 //= require edit_mode_controller
+
+//= require file_uploads/jquery.ui.widget
+//= require file_uploads/jquery.fileupload
+//= require file_uploads/main_fileupload
+
 //= require bootstrap-datepicker
 //= require bootstrap-datepicker/core
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.de

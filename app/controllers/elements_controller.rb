@@ -291,7 +291,9 @@ class ElementsController < ApplicationController
   end
 
   def sort_groupBy_values(group_by)
-    return Hash[group_by.values.sort_by { |_k, v| -v }].to_h unless !group_by.nil?
+    if !group_by.nil?
+      Hash[group_by.values.sort_by { |_k, v| -v }].to_h
+    end
   end
 
   def sort_elements
