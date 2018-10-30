@@ -7,14 +7,14 @@ class FileuploadController < ApplicationController
     element_key = params[:elementKey]
     files = params[:files]
 
-    puts "Upload for: #{element_key} started"
+    puts "Upload for: #{element_key} to keytech API started"
     result = keytechAPI.files.uploadMasterFile(element_key, files.tempfile, files.original_filename)
     puts "Upload complete! #{result.inspect}"
 
     render(json: to_fileupload(files.original_filename), content_type: request.format)
   end
 
-# OK / Error usw..
+  # TODO: get valid response here!
   def to_fileupload(attachment_name)
     {
       files: [

@@ -11,6 +11,9 @@
  */
 
 .fileinput-button {
+  margin-top: 15px;
+  margin-left: 15px;
+  
   position: relative;
   overflow: hidden;
   display: inline-block;

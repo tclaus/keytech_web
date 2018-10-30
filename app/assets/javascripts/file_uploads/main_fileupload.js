@@ -24,13 +24,15 @@ $(function () {
         send: function (e, data) {
           $('#filename').html('Laden...');
           $('#filesize').html('');
+          $('span.fileinput-button').hide();
         },
         done: function (e, data) {
                $.each(data.result.files, function (index, file) {
                  if (file == undefined) {
-                   $('#filename').html('Laden...');
+                   $('#filename').html('Fehler beim Upload');
                  } else {
                    $('#filename').html('<i class="fas fa-file-download"></i>&nbsp;' + file.name);
+                   $('span.fileinput-button').show();
                  }
                });
          },
