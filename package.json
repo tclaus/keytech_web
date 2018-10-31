@@ -1,5 +1,7 @@
 {
   "name": "keytech_web",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "imageMagick": "^0.1.2"
+  }
 }

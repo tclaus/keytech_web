@@ -27,6 +27,9 @@ gem 'font-awesome-sass', '~> 5.3.1'
 
 gem 'dotenv-rails', groups: %i[development test]
 
+# Resize image
+gem 'lizard', '~> 1.0'
+
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 
