@@ -177,22 +177,22 @@ class ElementsController < ApplicationController
 
   def masterfile
     # Load masterfile from elementID
-    masterfilename = keytechAPI.files.masterfilename(params[:id])
-    files = keytechAPI.files.loadMasterfile(params[:id])
+    masterfilename = keytechAPI.files.masterfile_name(params[:id])
+    files = keytechAPI.files.load_masterfile(params[:id])
     send_data files, type: files.content_type, disposition: 'attachment', filename: masterfilename
   end
 
   def thumbnail
-    elementKey = params[:id]
-    image = keytechAPI.elements.thumbnail(elementKey)
-    response.headers['Cache-Control'] = 'public, max-age=3600'
+    element_key = params[:id]
+    image = keytechAPI.elements.thumbnail(element_key)
+    # response.headers['Cache-Control'] = 'public, max-age=3600'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def preview
-    elementKey = params[:id]
-    image = keytechAPI.elements.preview(elementKey)
-    response.headers['Cache-Control'] = 'public, max-age=3600'
+    element_key = params[:id]
+    image = keytechAPI.elements.preview(element_key)
+    # response.headers['Cache-Control'] = 'public, max-age=3600'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
@@ -262,9 +262,9 @@ class ElementsController < ApplicationController
       @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
     end
 
-    @hasMasterfile = keytechAPI.files.hasMasterfile(@element.key)
+    @hasMasterfile = keytechAPI.files.has_masterfile(@element.key)
     if @hasMasterfile == true
-      @masterfileInfo = keytechAPI.files.masterfileInfo(@element.key)
+      @masterfileInfo = keytechAPI.files.masterfile_info(@element.key)
     end
   end
 

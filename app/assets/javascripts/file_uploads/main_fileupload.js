@@ -1,5 +1,6 @@
-$(function() {
-  'use strict';
+$(function () {
+    // jshint nomen:false
+    'use strict';
 
   // Initialize the jQuery File Upload widget:
   $('#fileupload').fileupload({
@@ -15,6 +16,10 @@ $(function() {
       if (file.success) {
         $('#filename').html('<i class="fas fa-file-download"></i>&nbsp;' + file.name);
         $('span.fileinput-button').show();
+
+        // force reload of thumbnail - cache
+        loadPreview(file.elementkey);
+
       } else {
         $('#filename').html('Fehler beim Upload');
         $('#filename').append('<div>' + file.error + '</div>');
@@ -36,5 +41,16 @@ $(function() {
       }
     }
   });
+
+function loadPreview(element_key) {
+  var preview_url = '/element/' + element_key + '/preview?_=' +  randomNumber();
+  $('#thumbnail').fadeOut();
+  $('#thumbnail').attr("src",preview_url);
+  $('#thumbnail').fadeIn();
+}
+
+function randomNumber() {
+  return Math.floor((Math.random() * 100000) + 1);
+}
 
 });

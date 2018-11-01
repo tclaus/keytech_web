@@ -12,34 +12,51 @@ class FileuploadController < ApplicationController
 
     # put this in a background thread!
     logger.info "Upload masterfile for: #{element_key} to keytech API started"
-    masterfile_result = keytechAPI.files.uploadMasterFile(element_key, tempfile, files.original_filename)
+    masterfile_result = keytechAPI.files.upload_masterfile(element_key, tempfile, files.original_filename)
     tempfile.rewind
     logger.info "Upload masterfile complete! #{masterfile_result.inspect}"
 
     # create image thumbnail
-    create_thumbnail_result = create_image_thumbnail(tempfile)
-    tempfile.rewind
-    if create_thumbnail_result[:success]
-      logger.info "Upload preview file"
-      thumbnail_result = keytechAPI.files.uploadQuickPreviewFile(element_key, create_thumbnail_result[:filename], files.original_filename)
-      logger.info "Thumbnail upload result: #{thumbnail_result.inspect}"
-      # Invalid cache!
-    end
+    create_thumbnail_from_file(element_key, tempfile, files.original_filename)
+
+    # Force element updated_element
+    element = keytechAPI.elements.newElement('default_do')
+    element.key = element_key
+    saved_element = keytechAPI.elements.update(element)
+    logger.info "Saved element: #{saved_element.inspect}"
 
     # Set an answer that image is loaded
-    render(json: to_fileupload(masterfile_result, files.original_filename), content_type: request.format)
+    render(json: to_fileupload(masterfile_result, files.original_filename, element_key), content_type: request.format)
   end
 
   # TODO: get valid response here!
-  def to_fileupload(result, filename)
+  def to_fileupload(result, filename, element_key)
     {
         success: result[:success],
+        elementkey: element_key,
         error: result[:error],
         name: filename
     }
   end
 
   private
+
+  def create_thumbnail_from_file(element_key, tempfile, original_filename)
+    create_thumbnail_result = create_image_thumbnail(tempfile)
+    tempfile.rewind
+    if create_thumbnail_result[:success]
+      logger.info "Upload preview file"
+      thumbnail_result = keytechAPI.files.upload_quickpreview(element_key,
+                    create_thumbnail_result[:filename],
+                    original_filename)
+
+      logger.info " Thumbnail upload result: #{thumbnail_result.inspect}"
+    else
+      # delete old thumbnail!
+      logger.info " Could not automagically create a preview. Removing, so image server can handle this"
+      keytechAPI.files.remove_quickpreview(element_key)
+    end
+  end
 
   # Creates and stores a tumbnail tempfile for image types
   def create_image_thumbnail(image_file)
