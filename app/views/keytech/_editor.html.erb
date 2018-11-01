@@ -6,25 +6,27 @@
     <% else %>
       <%= image_tag preview_element_path, class: "thumbnail" %>
     <% end %>
-    <% if @hasMasterfile %>
-      <%= link_to masterfile_element_path do %>
+    <% if classType(@element.key) == "DO" %>
+      <% if @hasMasterfile %>
+        <%= link_to masterfile_element_path do %>
 
-        <div id="filename" class="masterfile_name"> <i class="fas fa-file-download"></i> &nbsp;<%= @masterfileInfo.fileName %></div>
-        <div id="filesize" class="secondary_fileInfo">
-          <%= number_to_human_size(@masterfileInfo.fileSize) %>
-        </div>
+          <div id="filename" class="masterfile_name"> <i class="fas fa-file-download"></i> &nbsp;<%= @masterfileInfo.fileName %></div>
+          <div id="filesize" class="secondary_fileInfo">
+            <%= number_to_human_size(@masterfileInfo.fileSize) %>
+          </div>
+        <% end %>
+      <% else %>
+        <div id="filename" class="masterfile_name">Keine Datei vorhanden</div>
       <% end %>
-    <% else %>
-      <div id="filename" class="masterfile_name">Keine Datei vorhanden</div>
-    <% end %>
-    <%= form_tag do %>
-      <%= hidden_field_tag(:elementKey, @element.key) %>
+      <%= form_tag do %>
+        <%= hidden_field_tag(:elementKey, @element.key) %>
 
-      <span class="btn btn-success fileinput-button">
-          <i class="glyphicon glyphicon-plus"></i>
-          <span>Datei hinzufügen</span>
-          <input id="fileupload" type="file" name="files">
-      </span>
+        <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>Datei hinzufügen</span>
+            <input id="fileupload" type="file" name="files">
+        </span>
+      <% end %>
     <% end %>
       <!-- The global progress bar -->
       <div id="progress">

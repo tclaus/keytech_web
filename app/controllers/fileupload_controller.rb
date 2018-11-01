@@ -27,18 +27,15 @@ class FileuploadController < ApplicationController
     end
 
     # Set an answer that image is loaded
-    render(json: to_fileupload(files.original_filename), content_type: request.format)
+    render(json: to_fileupload(masterfile_result, files.original_filename), content_type: request.format)
   end
 
   # TODO: get valid response here!
-  def to_fileupload(attachment_name)
+  def to_fileupload(result, filename)
     {
-      files: [
-        {
-          id:   42,
-          name: attachment_name
-        }
-      ]
+        success: result[:success],
+        error: result[:error],
+        name: filename
     }
   end
 

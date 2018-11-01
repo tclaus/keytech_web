@@ -185,21 +185,21 @@ class ElementsController < ApplicationController
   def thumbnail
     elementKey = params[:id]
     image = keytechAPI.elements.thumbnail(elementKey)
-    response.headers['Cache-Control'] = 'public, max-age=86400'
+    response.headers['Cache-Control'] = 'public, max-age=3600'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def preview
     elementKey = params[:id]
     image = keytechAPI.elements.preview(elementKey)
-    response.headers['Cache-Control'] = 'public, max-age=86400'
+    response.headers['Cache-Control'] = 'public, max-age=3600'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def destroy
     if user_signed_in?
       # rescue where used, if any
-      whereused = keytechAPI.elements.whereused(params[:id], {attributes: 'none'})
+      whereused = keytechAPI.elements.whereused(params[:id], { attributes: 'none' })
 
       result = keytechAPI.elements.delete(params[:id])
       if result.success?
