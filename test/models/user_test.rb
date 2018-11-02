@@ -1,35 +1,40 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  def setup
-    @user = User.new(name: 'Example User', email: 'user@example.com')
+  test "should not save a user without email and password" do
+    user = User.new
+    user.valid?
+    # puts "#{user.errors.inspect}"
+    assert_not user.valid?
   end
 
-  test 'should be valid' do
-    assert @user.valid?
+  test "should save a user without password" do
+    user = User.new(email: "user@example.com")
+    user.valid?
+    # puts "#{user.errors.inspect}"
+    assert_not user.valid?
   end
 
-  test 'name should be present' do
-    @user.name = ''
-    assert_not @user.valid?
+  test "should save a user with email and password" do
+    user = User.new(email: "user@example.com", password: "crypted stuff")
+    user.valid?
+    # puts "#{user.errors.inspect}"
+    assert user.valid?
   end
 
-  test 'email should be present' do
-    @user.email = '     '
-    assert_not @user.valid?
+  test "should have default keytech server and username" do
+    user = User.new(email: "user@example.com", password: "crypted stuff")
+    puts "Before save: keytechurl: #{user.keytech_url}"
+    user.save
+    puts "after save: keytechurl: #{user.keytech_url}"
+    assert_not_empty user.keytech_url
+    assert_not_empty user.keytech_username
   end
 
-  test 'email addresses should be saved as lower-case' do
-    mixed_case_email = 'Foo@ExAMPle.CoM'
-    @user.email = mixed_case_email
-    @user.save
-    assert_equal mixed_case_email.downcase, @user.reload.email
+  test "should have always a lower case mail addresss" do
+    user = User.new(email: "user@EXAMPLE.com", password: "crypted stuff")
+    user.save
+    assert_equal 'user@example.com', user.email
   end
 
-  test 'user should have default keytech_url and credentials' do
-    # @user.save
-    assert_equal 'https://demo.keytech.de', @user.keytech_url
-    assert_equal 'jgrant', @user.keytech_username
-    assert_equal '', @user.keytech_password
-  end
 end

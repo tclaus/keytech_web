@@ -7,18 +7,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :confirmable, :trackable
 
   before_save { self.email = email.downcase }
-  before_create :default_values
+  after_initialize :set_default_values, unless: :persisted?
 
-  after_initialize do
-    if new_record?
-      # values will be available for new record forms.
-      default_values
-    end
-  end
-
-  before_save :encryptValues
-  after_save :decryptValues
-  after_initialize :decryptValues
+  before_save :encrypt_values
+  after_save :decrypt_values
 
   validates :name,  presence: false, length: { maximum: 50 }
 
@@ -27,11 +19,10 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
 
-  def default_values
-    puts 'run after create'
+  def set_default_values
     self.keytech_url = ENV['KEYTECH_URL']
     self.keytech_username = ENV['KEYTECH_USERNAME']
-    self.keytech_password = ENV['KEYTECH_PASSORD']
+    self.keytech_password = ENV['KEYTECH_PASSWORD']
   end
 
   def hasValidConnection?
@@ -71,13 +62,13 @@ class User < ApplicationRecord
 
   private
 
-  def encryptValues
+  def encrypt_values
     self.keytech_url = encrypt(keytech_url)
     self.keytech_username = encrypt(keytech_username)
     self.keytech_password = encrypt(keytech_password)
   end
 
-  def decryptValues
+  def decrypt_values
     self.keytech_url = decrypt(keytech_url)
     self.keytech_username = decrypt(keytech_username)
     self.keytech_password = decrypt(keytech_password)
@@ -89,7 +80,7 @@ class User < ApplicationRecord
     len = ActiveSupport::MessageEncryptor.key_len
     password = ENV['CRYPTED_PASSWORD']
 
-    key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt, len)
+    key = ActiveSupport::KeyGenerator.new(password).generate_key(get_salt, len)
     crypt = ActiveSupport::MessageEncryptor.new(key)
     encrypted_data = crypt.encrypt_and_sign(value)
     encrypted_data
@@ -102,7 +93,7 @@ class User < ApplicationRecord
     value ||= ''
     len = ActiveSupport::MessageEncryptor.key_len
     password = ENV['CRYPTED_PASSWORD']
-    key = ActiveSupport::KeyGenerator.new(password).generate_key(getSalt, len)
+    key = ActiveSupport::KeyGenerator.new(password).generate_key(get_salt, len)
     crypt = ActiveSupport::MessageEncryptor.new(key)
     decrypted_data = crypt.decrypt_and_verify(value)
     decrypted_data
@@ -111,9 +102,8 @@ class User < ApplicationRecord
     ''
   end
 
-  def getSalt
+  def get_salt
     if salt.blank?
-      puts '.. salt is blank! Creating a new salt.'
       len = ActiveSupport::MessageEncryptor.key_len
       self.salt = Base64.encode64(SecureRandom.random_bytes(len))
     end
