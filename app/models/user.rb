@@ -11,6 +11,7 @@ class User < ApplicationRecord
 
   before_save :encrypt_values
   after_save :decrypt_values
+  after_find :decrypt_values
 
   validates :name,  presence: false, length: { maximum: 50 }
 
