@@ -22,15 +22,6 @@ class UserTest < ActiveSupport::TestCase
     assert user.valid?
   end
 
-  test "should have default keytech server and username" do
-    user = User.new(email: "user@example.com", password: "crypted stuff")
-    puts "Before save: keytechurl: #{user.keytech_url}"
-    user.save
-    puts "after save: keytechurl: #{user.keytech_url}"
-    assert_not_empty user.keytech_url
-    assert_not_empty user.keytech_username
-  end
-
   test "should have readable keytech credentials after save" do
     user = User.new(email: "user@example.com", password: "crypted stuff")
     puts "Before save: keytech_url= #{user.keytech_url}"
