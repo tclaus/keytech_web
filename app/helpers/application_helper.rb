@@ -28,7 +28,8 @@ module ApplicationHelper
     icon = sort_direction == 'asc' ? 'fas fa-caret-up' : 'fas fa-caret-down'
     icon = column == sort_column ? icon : ''
 
-    parameter = params.permit(:id, :q, :classes, :byquery, :column, :direction).merge(column: column, direction: direction)
+    parameter = params.permit(:id, :q, :classes, :byquery, :column, :direction)
+                      .merge(column: column, direction: direction)
     link_to "#{title} <i class='#{icon}'></i>".html_safe,  parameter
   end
 end

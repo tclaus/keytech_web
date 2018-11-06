@@ -22,7 +22,6 @@ class UsersController < ApplicationController
   def edit_keytech_settings; end
 
   def update_keytech_settings
-    puts "Update settings #{params}"
     current_user.update_attributes(keytech_params)
     if !current_user.hasValidConnection?
       redirect_to keytech_settings_path, alert: 'keytech URL, Benutzername oder Passwort falsch'

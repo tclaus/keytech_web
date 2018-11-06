@@ -1,5 +1,5 @@
 <% content_for :title do %>
-  <%= @classDefinition.displayname %> anlegen
+  <%= @class_definition.displayname %> anlegen
 <% end %>
 <% content_for :subtext do %>
   Eigenschaften definieren
@@ -11,10 +11,10 @@
 
 <div id="data-list">
   <%= form_tag '/engine/newelement', id: "create_element_form" do %>
-  <%= hidden_field_tag(:classKey, @classDefinition.classKey) %>
+  <%= hidden_field_tag(:classKey, @class_definition.classKey) %>
 
   <div class="list-group modal-items-list" >
-    <% if !@classDefinition.hasNumberGenerator %>
+    <% if !@class_definition.hasNumberGenerator %>
       <div class="list-group-item highlight">
         <div class="form-group">
           <%= label_tag(:elementName, "Name des Elementes") %>

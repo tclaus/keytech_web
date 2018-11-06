@@ -53,7 +53,7 @@ class User < ApplicationRecord
     @keytechAPI
   end
 
-  def isAdmin
+  def admin?
     email == ENV['ADMIN_MAIL']
   end
 

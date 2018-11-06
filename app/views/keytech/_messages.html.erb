@@ -7,7 +7,7 @@
       <small>Von: <%= mail['Sender'] %>, An: <%= mail['Recipient'] %></small>
       <div class="d-flex w-100 justify-content-between">
         <h6 class="mb-1"><%= mail['Subject'] %></h6>
-        <small><%= parseValue(mail['TransportDate']) %></small>
+        <small><%= parse_value(mail['TransportDate']) %></small>
       </div>
       <p class="mb-1"><%= mail['Description'] %></p>
     </a>

@@ -7,10 +7,10 @@
         Alle
       <% end %>
 
-      <% if !@searchResponseHeader.groupBy.blank? %>
-        <% @searchResponseHeader.groupBy.values.each do |k,v| %>
+      <% if !@search_response_header.groupBy.blank? %>
+        <% @search_response_header.groupBy.values.each do |k,v| %>
           <%= link_to(search_element_path({q: params[:q],classes: k}), html_options={class:"list-group-item list-group-item-action d-flex justify-content-between align-items-center"}) do %>
-            <%= displayNameForClass(k) %>
+            <%= class_displayname(k) %>
             <span class="badge badge-secondary badge-pill"><%= v %></span>
           <% end %>
         <% end %>

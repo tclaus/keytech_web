@@ -24,7 +24,7 @@
             data-is-writable="<%= control.isEditable %>">
 
             <div class="attribute-field <%= pointerClass %> clearfix">
-              <% value = editorValueParser(element.keyValueList[control.attributeName]) %>
+              <% value = parse_value(element.keyValueList[control.attributeName]) %>
               <% if !control.controlType.blank? && control.controlType.downcase == "check" %>
                 <% if value == true || value == "true" || value == "1" %>
                   <i class="far fa-check-square"></i>
@@ -33,7 +33,7 @@
                 <% end %>
               <% else %>
                 <% if value.blank? %>
-                  &nbsp; 
+                  &nbsp;
                 <% else %>
                   <%= value %>
                 <% end %>

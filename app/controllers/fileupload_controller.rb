@@ -26,7 +26,8 @@ class FileuploadController < ApplicationController
     logger.info "Saved element: #{saved_element.inspect}"
 
     # Set an answer that image is loaded
-    render(json: to_fileupload(masterfile_result, files.original_filename, element_key), content_type: request.format)
+    fu_json = to_fileupload(masterfile_result, files.original_filename, element_key)
+    render(json: fu_json, content_type: request.format)
   end
 
   # TODO: get valid response here!

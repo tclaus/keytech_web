@@ -40,7 +40,7 @@ class EngineController < ApplicationController
 
   def show_new_element_dialog
     class_key = params[:classkey]
-    @classDefinition = getClassDefinition(class_key)
+    @class_definition = getClassDefinition(class_key)
     @layout = getLayout(class_key)
     render 'elements/show_new_element', layout: 'modal_edit_element'
   end
@@ -71,14 +71,14 @@ class EngineController < ApplicationController
     end
 
     unless errors.empty?
-      puts "Errors occured: #{errors.inspect}"
+      logger.error "Errors occured: #{errors.inspect}"
       flash[:warning] = errors
       redirect_back(fallback_location: root_path)
     end
 
     saved_element = keytechAPI.elements.save(element)
     # Save ok? If not create a warning and rebuild
-    puts "new element: #{saved_element.inspect}"
+    logger.info "New element saved: #{saved_element.key}"
     if saved_element.blank?
       logger.warn('Could not save element')
       flash[:warning] = 'Konnte Element nicht anlegen.'
@@ -94,7 +94,6 @@ class EngineController < ApplicationController
     data_dictionary_id = params[:dataDictionaryID]
     @element_key = params[:elementKey]
     @attribute = params[:attribute]
-    puts "show_value form: #{params}"
 
     if data_dictionary_id != '0'
       # Give layout, if elementkey was set
@@ -127,7 +126,7 @@ class EngineController < ApplicationController
     end
 
     if @attribute_type == 'date'
-      @field_value = helpers.editorValueParser(@field_value)
+      @field_value = helpers.parse_value(@field_value)
       render 'forms/date_editor', layout: 'attribute_form'
     end
   end
@@ -188,7 +187,6 @@ class EngineController < ApplicationController
     @data = getDataDictionaryData(dd_id)
     @data_dictionary_id = dd_id
     # response.headers['Cache-Control'] = 'public, max-age=3600'
-    puts "Loading data dictionary: For Attribute: #{@attribute}, layout: #{with_layout}"
     if with_layout
       render 'forms/dataDictionary_editor', layout: 'attribute_form'
     else

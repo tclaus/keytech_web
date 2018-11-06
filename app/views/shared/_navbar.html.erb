@@ -39,7 +39,7 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <%= link_to 'Einstellungen', edit_user_registration_path, class: "dropdown-item" %>
-            <% if current_user.isAdmin %>
+            <% if current_user.admin? %>
               <%= link_to 'Administration', admin_path, class: "dropdown-item" %>
             <% end %>
             <div class="dropdown-divider"></div>

@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
       if current_user.hasValidConnection?
         @favorites = current_user.favorites
         @queries = current_user.queries
-        @keytechUserName = current_user.keytech_username
+        @keytech_username = current_user.keytech_username
         # Load Dashboard async in javascript
         render 'home'
       else
@@ -44,16 +44,6 @@ class ApplicationController < ActionController::Base
   end
 
   def dashboard
-    # 2. Changed by me
-    #   changedBy = me | if createdBy == changedBy => "created by me" / Changed by me
-    #   changedAt => 7 Days
-    #   limit = 25
-
-    # 3. My elements changed by others
-    #  createdBy = me
-    # changedBy = other
-    # changed_at => 7 days
-
     @dashboard_elements = load_dashboard_cached
     render layout: false
   end
@@ -63,7 +53,7 @@ class ApplicationController < ActionController::Base
   # sets the localizaton from request Header
   def set_locale
     if current_user.blank?
-      I18n.locale = get_valid_language
+      I18n.locale = valid_language
       logger.debug "* Locale set to '#{I18n.locale}'"
     else
       # TODO: Let user decide which language - to high prio in keytech environment
@@ -72,7 +62,7 @@ class ApplicationController < ActionController::Base
   end
 
   # Returns a valid language ID. Fall back to a default
-  def get_valid_language
+  def valid_language
     locale = extract_locale_from_accept_language_header
     logger.debug "* Extracted Locale ID: #{locale}"
     if !locale.blank? &&
@@ -99,22 +89,24 @@ class ApplicationController < ActionController::Base
 
   # Executes query from api for recent changes
   def load_dashboard_from_api
-    puts 'Loading dashboard...'
-    maxElements = 5
+    logger.info 'Loading dashboard...'
+    max_elements = 5
     username = current_user.keytech_username
     ms_from_epoch = 7.day.ago.to_i * 1000
     from_date = "/Date(#{ms_from_epoch})/"
-    options = { fields: "created_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: 'changed_at,desc' }
+    options = { fields: "created_by=#{username}:changed_at>#{from_date}", size: max_elements, sortBy: 'changed_at,desc' }
 
-    createdByMeResult = keytechAPI.search.query(options)
+    self_created = keytechAPI.search.query(options)
 
-    options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}", size: maxElements, sortBy: 'changed_at,desc' }
-    changedByMeResult = keytechAPI.search.query(options)
+    options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}",
+                size: max_elements,
+                sortBy: 'changed_at,desc' }
+    self_changed = keytechAPI.search.query(options)
 
-    elementList = (createdByMeResult.elementList + changedByMeResult.elementList)
-    puts 'Finished loading dashboard'
-    elementList.sort_by!(&:changedAt)
-    elementList.reverse
+    element_list = (self_created.elementList + self_changed.elementList)
+    logger.info 'Finished loading dashboard'
+    element_list.sort_by!(&:changedAt)
+    element_list.reverse
   end
 
   def keytechAPI

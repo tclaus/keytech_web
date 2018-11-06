@@ -1,6 +1,6 @@
 class AdminController < ApplicationController
   before_action :authenticate_user!
-  before_action :isAdmin
+  before_action :check_admin
 
   def index
     @users = User.all.order(:id)
@@ -9,10 +9,7 @@ class AdminController < ApplicationController
 
   private
 
-  def isAdmin
-    unless current_user.isAdmin
-      # ä todo flash message
-      redirect_to root_path
-    end
+  def check_admin
+    redirect_to root_path unless current_user.admin?
   end
 end

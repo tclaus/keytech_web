@@ -39,14 +39,8 @@ class ElementsController < ApplicationController
         load_element_tabs
         load_lister_layout
         @elements = keytechAPI.elements.structure(params[:id], attributes: 'lister')
-        simplifyKeyValueList(@elements)
-
-        print_element_list
+        simplify_key_value_list(@elements)
         sort_elements
-        print_element_list
-        # byebug
-        # keytech does not sort structures
-
       else
         flash_element_not_found
       end
@@ -67,7 +61,7 @@ class ElementsController < ApplicationController
         load_element_tabs
         load_lister_layout
         @elements = keytechAPI.elements.whereused(params[:id], attributes: 'all')
-        simplifyKeyValueList(@elements)
+        simplify_key_value_list(@elements)
         sort_elements
       else
         flash_element_not_found
@@ -79,7 +73,6 @@ class ElementsController < ApplicationController
   end
 
   def show_notes
-    # redirect to a view
     if user_signed_in?
       load_my_keytech
       load_element('none')
@@ -132,11 +125,7 @@ class ElementsController < ApplicationController
         load_element_tabs
         load_bom_layout
         @elements = keytechAPI.elements.billOfMaterial(params[:id], attributes: 'lister')
-
-        print_element_list
         sort_elements
-        print_element_list
-
       else
         flash_element_not_found
       end
@@ -153,21 +142,20 @@ class ElementsController < ApplicationController
       sort_by = "#{params[:column]},#{params[:direction]}"
 
       @layout = load_lister_layout
-      options =    { q: params[:q],
-               byQuery: params[:byquery],
-               groupBy: 'classkey',
-               classes: params[:classes],
-            attributes: 'lister',
+      options = { q: params[:q],
+                byQuery: params[:byquery],
+                groupBy: 'classkey',
+                classes: params[:classes],
+                attributes: 'lister',
                 sortBy: sort_by }
 
-      @searchResponseHeader = keytechAPI.search.query(options)
+      @search_response_header = keytechAPI.search.query(options)
 
-      sort_groupBy_values(@searchResponseHeader.groupBy)
+      sort_groupby_values(@search_response_header.groupBy)
 
-      puts "Groups: #{@searchResponseHeader.groupBy.inspect}"
-      @elements = @searchResponseHeader.elementList
-      simplifyKeyValueList(@elements)
-      # load in another controller?
+      @elements = @search_response_header.elementList
+      simplify_key_value_list(@elements)
+      # TODO: Load in another controller?
       render 'keytech/_search_results'
     else
       # 404 not found?
@@ -203,10 +191,10 @@ class ElementsController < ApplicationController
 
       result = keytechAPI.elements.delete(params[:id])
       if result.success?
-        flash[:info] = "Element wurde gelöscht."
+        flash[:info] = 'Element wurde gelöscht.'
       else
         logger.warn "Element #{params[:id]} can not be deleted. Server message: '#{result.headers['x-errordescription']}'"
-        flash[:error] = "Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen."
+        flash[:error] = 'Konnte nicht gelöscht werden. Ihnen fehlen möglicherweise die Berechtigungen.'
       end
     end
 
@@ -226,7 +214,7 @@ class ElementsController < ApplicationController
 
   # Removes the prefix as_do__,  as_sdo__ .. from all keys in keyValueList.
   #
-  def simplifyKeyValueList(elements)
+  def simplify_key_value_list(elements)
     # remove everything form right to left till the double unerline
     elements.each do |element|
       element.keyValueList.transform_keys! do |key|
@@ -276,25 +264,16 @@ class ElementsController < ApplicationController
   def load_element(attributes = 'all')
     # If ID.startWith BOM - then load Article (default_mi)
     element_key = params[:id]
-    puts "Load element with key: #{element_key}"
+    logger.debug "Load element with key: #{element_key}"
     @element = keytechAPI.elements.load(element_key, attributes: attributes)
-    puts "Laded Element = #{@element.inspect}"
   end
 
   def keytechAPI
     current_user.keytechAPI
   end
 
-  def print_element_list
-    @elements.each do |element|
-      puts element.key.to_s
-    end
-  end
-
-  def sort_groupBy_values(group_by)
-    if !group_by.nil?
-      Hash[group_by.values.sort_by { |_k, v| -v }].to_h
-    end
+  def sort_groupby_values(group_by)
+    Hash[group_by.values.sort_by { |_k, v| -v }].to_h unless group_by.nil?
   end
 
   def sort_elements
@@ -302,10 +281,8 @@ class ElementsController < ApplicationController
     direction = params[:direction]
 
     if direction == 'desc'
-      puts 'Sort desc'
       @elements.sort! { |a, b| element_compare(column, a, b) }
     else
-      puts 'Sort asc'
       @elements.sort! { |a, b| element_compare(column, b, a) }
     end
   end
@@ -319,7 +296,7 @@ class ElementsController < ApplicationController
     return a.displayname <=> b.displayname if column == 'displayname'
 
     if column == 'classname'
-      return helpers.displayNameForClass(helpers.classKey(a.key)) <=> helpers.displayNameForClass(helpers.classKey(b.key))
+      return helpers.class_displayname(helpers.classKey(a.key)) <=> helpers.class_displayname(helpers.classKey(b.key))
     end
 
     # Check key value
@@ -330,15 +307,4 @@ class ElementsController < ApplicationController
     valueA <=> valueB
   end
 
-  def dateParser(dateString)
-    # /Date(-3600000)/
-    # /Date(1407103200000)/
-
-    # get numeric value
-    numeric_value = dateString[6..-3].to_i
-    # Placeholder for empty date
-    return '' if numeric_value == -3_600_000 || numeric_value.zero?
-
-    Time.at(numeric_value / 1000)
-  end
 end
