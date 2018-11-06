@@ -15,8 +15,6 @@ var app = new Vue({
   },
   methods: {
     click_class: function(event) {
-
-      console.log("Open a new element dialog for class: ", $(event.target).data('classkey'));
       var classkey = $(event.target).data('classkey');
       // Open new modal window with element properties
       $.get("/engine/newelement?classkey=" + classkey, function(data) {

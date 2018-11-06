@@ -17,16 +17,16 @@ class EngineController < ApplicationController
 
     # Filter only to files, office file and folders, ignore all CAD-related  types
     @classes = []
-    classes.each do |elementClass|
-      next unless elementClass.classKey.ends_with?('_WF') ||
-                  elementClass.classKey.ends_with?('_FD') ||
-                  elementClass.classKey.ends_with?('_FILE') ||
-                  elementClass.classKey.ends_with?('_WW') ||
-                  elementClass.classKey.ends_with?('_XL') ||
-                  elementClass.classKey.ends_with?('_PRJ')
+    classes.each do |element_class|
+      next unless element_class.classKey.ends_with?('_WF') ||
+                  element_class.classKey.ends_with?('_FD') ||
+                  element_class.classKey.ends_with?('_FILE') ||
+                  element_class.classKey.ends_with?('_WW') ||
+                  element_class.classKey.ends_with?('_XL') ||
+                  element_class.classKey.ends_with?('_PRJ')
 
-      if !elementClass.classKey.starts_with?('DEFAULT') && elementClass.isActive
-        @classes.push elementClass
+      if !element_class.classKey.starts_with?('DEFAULT') && element_class.isActive
+        @classes.push element_class
       end
     end
 
@@ -39,19 +39,20 @@ class EngineController < ApplicationController
   end
 
   def show_new_element_dialog
-    classKey = params[:classkey]
-    @classDefinition = getclassDefinition(classKey)
-    @layout = getLayout(classKey)
+    class_key = params[:classkey]
+    @classDefinition = getClassDefinition(class_key)
+    @layout = getLayout(class_key)
     render 'elements/show_new_element', layout: 'modal_edit_element'
   end
 
+  # Create and stores a new element
   def new_element
     # collect element data
-    classKey = params[:classKey]
-    element = keytechAPI.elements.newElement(params[:classKey])
+    class_key = params[:classKey]
+    element = keytechAPI.elements.newElement(class_key)
 
     # Layout holds all controls to fill
-    layout = getLayout(classKey)
+    layout = getLayout(class_key)
     errors = []
     layout.controls.each do |control|
       # Labels are the only control type a element can not use for data
@@ -77,6 +78,7 @@ class EngineController < ApplicationController
 
     saved_element = keytechAPI.elements.save(element)
     # Save ok? If not create a warning and rebuild
+    puts "new element: #{saved_element.inspect}"
     if saved_element.blank?
       logger.warn('Could not save element')
       flash[:warning] = 'Konnte Element nicht anlegen.'
@@ -89,44 +91,42 @@ class EngineController < ApplicationController
 
   def show_value_form
     # Load element
-    @elementKey = params[:elementKey]
+    data_dictionary_id = params[:dataDictionaryID]
+    @element_key = params[:elementKey]
     @attribute = params[:attribute]
-    @attributeType = params[:attributeType]
-    @dataDictionaryID = params[:dataDictionaryID]
+    puts "show_value form: #{params}"
 
-    @element = keytechAPI.elements.load(@elementKey, attributes: 'all')
-    @field_value = @element.keyValueList[@attribute]
-
-    if @dataDictionaryID != '0'
-      # Load DD Field
-      @dataDefinition = getDataDictionaryDefinition(@dataDictionaryID)
-      @data = getDataDictionaryData(@dataDictionaryID)
-      response.headers['Cache-Control'] = 'public, max-age=3600'
-      render 'forms/dataDictionary_editor', layout: 'attribute_form'
-      return
+    if data_dictionary_id != '0'
+      # Give layout, if elementkey was set
+      return render_data_dictionary(data_dictionary_id, !@element_key.nil?)
     end
 
-    if @attributeType == 'text'
+    @element_key = params[:elementKey]
+    @attribute_type = params[:attributeType]
+    @element = keytechAPI.elements.load(@element_key, attributes: 'all')
+    @field_value = @element.keyValueList[@attribute]
+
+    if @attribute_type == 'text'
       render 'forms/text_editor', layout: 'attribute_form'
     end
 
-    if @attributeType == 'memo'
+    if @attribute_type == 'memo'
       render 'forms/textarea_editor', layout: 'attribute_form'
     end
 
-    if @attributeType == 'double'
+    if @attribute_type == 'double'
       render 'forms/number_editor', layout: 'attribute_form'
     end
 
-    if @attributeType == 'integer'
+    if @attribute_type == 'integer'
       render 'forms/integer_editor', layout: 'attribute_form'
     end
 
-    if @attributeType == 'check'
+    if @attribute_type == 'check'
       render 'forms/check_editor', layout: 'attribute_form'
     end
 
-    if @attributeType == 'date'
+    if @attribute_type == 'date'
       @field_value = helpers.editorValueParser(@field_value)
       render 'forms/date_editor', layout: 'attribute_form'
     end
@@ -136,41 +136,22 @@ class EngineController < ApplicationController
     if params[:cancel] == 'true'
       redirect_back(fallback_location: root_path)
     else
-      elementKey = params[:elementKey]
+      element_key = params[:elementKey]
       attribute = params[:attribute]
       value = params[attribute]
-      dataDictionaryJson = params[:datadictionary]
-      dataDictionaryID = params[:datadictionary_id]
+      data_dictionary_json = params['datadictionary_field_' + attribute]
+      data_dictionary_id = params[:datadictionary_id]
 
-      # Nicht alle beliebige Attribute füllen!
-      # TODO: mache eine Liste mit Attribute, die nicht gehen: name, acl, alle Systematribute
-      # as_.. ??
-
-      # TODO: Validate - isNullable, type?
-
-      element = @element = keytechAPI.elements.newElement(elementKey)
-      if dataDictionaryID.blank?
+      element = keytechAPI.elements.newElement(element_key)
+      if data_dictionary_id.blank?
         element.keyValueList[attribute] = value
       else
-        dataDefinition = getDataDictionaryDefinition(dataDictionaryID)
-        dataDefinition.each do |definition|
-          unless definition.toTargetAttribute.blank?
-            dataDictionaryValues = JSON.parse(dataDictionaryJson)
-            element.keyValueList[definition.toTargetAttribute] = dataDictionaryValues[definition.attribute.to_s]
-          end
-        end
+        update_data_dictionary_field(element, data_dictionary_id, data_dictionary_json)
       end
 
       updated_element = keytechAPI.elements.update(element)
-      # Save ok? If not create a warning and rebuild
-      if updated_element.blank?
-        logger.warn('Could not update element')
-        flash[:warning] = 'Konnte Element nicht aktualisieren.'
-        redirect_back(fallback_location: root_path)
-      else
-        flash[:info] = 'Element wurde aktualisiert.'
-        redirect_to show_element_path(id: updated_element.key)
-      end
+
+      show_updated_element(updated_element)
     end
   end
 
@@ -180,6 +161,40 @@ class EngineController < ApplicationController
   end
 
   private
+
+  def show_updated_element(element)
+    if element.blank?
+      logger.warn('Could not update element')
+      flash[:warning] = 'Konnte Element nicht aktualisieren.'
+      redirect_back(fallback_location: root_path)
+    else
+      flash[:info] = 'Element wurde aktualisiert.'
+      redirect_to show_element_path(id: element.key)
+    end
+  end
+
+  def update_data_dictionary_field(element, data_dictionary_id, data_dictionary_json)
+    data_definition = getDataDictionaryDefinition(data_dictionary_id)
+    data_definition.each do |definition|
+      unless definition.toTargetAttribute.blank?
+        values = JSON.parse(data_dictionary_json)
+        element.keyValueList[definition.toTargetAttribute] = values[definition.attribute.to_s]
+      end
+    end
+  end
+
+  def render_data_dictionary(dd_id, with_layout, search_text: '')
+    @data_definition = getDataDictionaryDefinition(dd_id)
+    @data = getDataDictionaryData(dd_id)
+    @data_dictionary_id = dd_id
+    # response.headers['Cache-Control'] = 'public, max-age=3600'
+    puts "Loading data dictionary: For Attribute: #{@attribute}, layout: #{with_layout}"
+    if with_layout
+      render 'forms/dataDictionary_editor', layout: 'attribute_form'
+    else
+      render 'forms/dataDictionary_editor', layout: false
+    end
+  end
 
   def getDataDictionaryDefinition(ddID)
     Rails.cache.fetch("#{current_user.cache_key}/datadictionary/#{ddID}", expires_in: 1.hours) do
@@ -193,8 +208,8 @@ class EngineController < ApplicationController
     end
   end
 
-  def getclassDefinition(classKey)
-    Rails.cache.fetch("#{current_user.cache_key}/#{classKey.to_s}", expires_in: 1.hours) do
+  def getClassDefinition(classKey)
+    Rails.cache.fetch("#{current_user.cache_key}/#{classKey}", expires_in: 1.hours) do
       keytechAPI.classes.load(classKey)
     end
   end

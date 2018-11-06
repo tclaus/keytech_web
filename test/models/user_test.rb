@@ -24,12 +24,10 @@ class UserTest < ActiveSupport::TestCase
 
   test "should have readable keytech credentials after save" do
     user = User.new(email: "user@example.com", password: "crypted stuff")
-    puts "Before save: keytech_url= #{user.keytech_url}"
     user.save
     id = user.id
 
     loaded_user = User.find(id)
-    puts "After save: keytech_url= #{loaded_user.keytech_url}"
     assert_equal loaded_user.keytech_url, ENV['KEYTECH_URL']
     assert_equal loaded_user.keytech_username, ENV['KEYTECH_USERNAME']
   end

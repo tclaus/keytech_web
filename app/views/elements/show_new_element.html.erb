@@ -25,7 +25,7 @@
       <small>Hat Nummergenerator</small>
     <% end %>
 
-    <% # Add not nullable fields %>
+    <!--  Add not nullable fields -->
     <% @layout.controls.each do |layoutItem| %>
       <% if layoutItem.isNullable == false && layoutItem.isEditable && layoutItem.controlType != "LABEL" %>
         <div class="list-group-item highlight">
@@ -34,7 +34,7 @@
       <% end %>
     <% end %>
   <hr>
-    <% # Add nullable fields (filterable?) %>
+    <!-- # Add nullable fields (filterable?) -->
     <% @layout.controls.each do |layoutItem| %>
       <% if layoutItem.isNullable == true && layoutItem.isEditable && layoutItem.controlType != "LABEL" %>
         <div class="list-group-item">
@@ -51,3 +51,4 @@
 </div>
 
 <%= javascript_include_tag 'check_new_element' %>
+<%= javascript_include_tag 'new_element_controller' %>

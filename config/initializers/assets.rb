@@ -15,6 +15,8 @@ Rails.application.config.assets.precompile += %w[
   flash_messages
   classdefinition_filter
   check_new_element
-  attribute-editor
   load_dashboard
+  cancel_editmode_controller
+  dd_attribute_controller
+  new_element_controller
 ]

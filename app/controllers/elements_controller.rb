@@ -276,8 +276,9 @@ class ElementsController < ApplicationController
   def load_element(attributes = 'all')
     # If ID.startWith BOM - then load Article (default_mi)
     element_key = params[:id]
-
+    puts "Load element with key: #{element_key}"
     @element = keytechAPI.elements.load(element_key, attributes: attributes)
+    puts "Laded Element = #{@element.inspect}"
   end
 
   def keytechAPI

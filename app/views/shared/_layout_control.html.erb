@@ -1,27 +1,58 @@
-<% if layoutItem.controlType == "TEXT" %>
+<% if layoutItem.dataDictionaryID != 0 %>
+  <!-- Show inpiut field just to open a dD Table, but rspect free fields, without RO-->
   <div class="form-group">
-     <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
-     <%= text_field_tag(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control", required: required) %>
-   </div>
-<% end %>
+    <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
 
-<% if layoutItem.controlType == "INTEGER" %>
-  <div class="form-group">
-     <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
-     <%= number_field(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control", required: required) %>
-   </div>
-<% end %>
-
-<% if layoutItem.controlType == "CHECK" %>
-  <div class="form-check">
-    <%= check_box_tag(layoutItem.attributeName, class:"form-check-input") %>
-     <%= label_tag(layoutItem.attributeName, layoutItem.displayname, class:"form-check-label", required: required) %>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" name="<%= layoutItem.attributeName %>" placeholder="<%= layoutItem.defaultValue %>" aria-label="<%= layoutItem.displayname %>" aria-describedby="button-addon2" readonly=<%= layoutItem.isEditable %>>
+      <input type="hidden" name="datadictionary_field_<%= layoutItem.attributeName %>" id="datadictionary_field_<%= layoutItem.attributeName %>">
+      <div class="input-group-append" data-attribute="<%= layoutItem.attributeName%>" data-data-dictionary-id="<%= layoutItem.dataDictionaryID %>">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+          <i class="far fa-edit edit-icon" data-toggle="tooltip" data-placement="top" title="Werthilfe öffnen..."></i>
+        </button>
+      </div>
+    </div>
   </div>
-<% end %>
+<% else %>
 
-<% if layoutItem.controlType == "DATE" %>
-  <div class="form-group">
-     <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
-     <%= date_field(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control") %>
-   </div>
+  <% if layoutItem.controlType == "TEXT" %>
+    <div class="form-group">
+      <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
+      <% if required %>
+        *
+      <% end %>
+      <%= text_field_tag(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control", required: required) %>
+    </div>
+  <% end %>
+
+  <% if layoutItem.controlType == "INTEGER" %>
+    <div class="form-group">
+      <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
+      <% if required %>
+        *
+      <% end %>
+      <%= number_field(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control", required: required) %>
+    </div>
+  <% end %>
+
+  <% if layoutItem.controlType == "CHECK" %>
+    <div class="form-check">
+      <%= check_box_tag(layoutItem.attributeName, class:"form-check-input") %>
+      <% if required %>
+        *
+      <% end %>
+      <%= label_tag(layoutItem.attributeName, layoutItem.displayname, class:"form-check-label", required: required) %>
+    </div>
+  <% end %>
+
+  <% if layoutItem.controlType == "DATE" %>
+    <div class="form-group">
+      <%= label_tag(layoutItem.attributeName, layoutItem.displayname) %>
+      <% if required %>
+        *
+      <% end %>
+      <%= date_field(layoutItem.attributeName, layoutItem.defaultValue, class:"form-control") %>
+    </div>
+  <% end %>
+
 <% end %>

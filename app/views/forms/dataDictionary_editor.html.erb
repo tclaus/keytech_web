@@ -1,28 +1,29 @@
 
-  <%= hidden_field_tag("datadictionary_id", @dataDictionaryID) %>
-  <input type="hidden" name="datadictionary" id="datadictionary_field" value="">
-<!-- selektion in ein hidden feld eintragen -->
-
-  <div class="table-responsive-sm scroll-data-dictionary-table">
-    <table class="table table-sm table-hover">
+<div class="table-responsive-sm scroll-data-dictionary-table"
+    id="dd_table"
+    data-attribute="<%= @attribute %>"
+    data-data-dictionary-id="<%= @data_dictionary_id %>">
+  <table class="table table-sm table-hover">
     <thead>
-          <tr>
-            <% @dataDefinition.each do |definition| %>
-              <th scope="col"><%= definition.displayText %></th>
-            <% end %>
-          </tr>
+      <tr>
+        <% @data_definition.each do |definition| %>
+          <th scope="col"><%= definition.displayText %></th>
+        <% end %>
+      </tr>
     </thead>
     <tbody>
       <!-- Hier dynamisch laden, max X gleichzeitig, endless scrolling?? -->
       <% @data.each do |data| %>
-      <tr class='clickable-row' data-json='<%= data.to_json %>'>
-        <% @dataDefinition.each do |definition| %>
-        <th>
-          <%= data[definition.attribute]%>
-        </th>
-        <% end %>
-      </tr>
+        <tr class='clickable-row' data-json='<%= data.to_json %>'>
+          <% @data_definition.each do |definition| %>
+            <th data-target_attribute="<%= definition.toTargetAttribute %>" >
+              <%= data[definition.attribute]%>
+            </th>
+          <% end %>
+        </tr>
       <% end %>
     </tbody>
   </table>
-  </div>
+</div>
+
+<%= javascript_include_tag 'dd_attribute_controller' %>
