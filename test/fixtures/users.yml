@@ -6,7 +6,7 @@ host:
   encrypted_password: <%= Devise::Encryptor.digest(User, "12345678") %>
   created_at: <%= Time.now - 7.minutes %>
   confirmed_at: <%= Time.now - 6.minutes %>
-
+  
 one:
   name: User 1
   email: user1@example.com
