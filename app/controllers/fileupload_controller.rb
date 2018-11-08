@@ -12,7 +12,7 @@ class FileuploadController < ApplicationController
 
     # put this in a background thread!
     logger.info "Upload masterfile for: #{element_key} to keytech API started"
-    masterfile_result = keytechAPI.files.upload_masterfile(element_key, tempfile, files.original_filename)
+    masterfile_result = keytechAPI.element_handler.file_handler.upload_masterfile(element_key, tempfile, files.original_filename)
     tempfile.rewind
     logger.info "Upload masterfile complete! #{masterfile_result.inspect}"
 
@@ -20,9 +20,9 @@ class FileuploadController < ApplicationController
     create_thumbnail_from_file(element_key, tempfile, files.original_filename)
 
     # Force element updated_element
-    element = keytechAPI.elements.newElement('default_do')
+    element = keytechAPI.element_handler.new_element('default_do')
     element.key = element_key
-    saved_element = keytechAPI.elements.update(element)
+    saved_element = keytechAPI.element_handler.update(element)
     logger.info "Saved element: #{saved_element.inspect}"
 
     # Set an answer that image is loaded
@@ -33,10 +33,10 @@ class FileuploadController < ApplicationController
   # TODO: get valid response here!
   def to_fileupload(result, filename, element_key)
     {
-        success: result[:success],
-        elementkey: element_key,
-        error: result[:error],
-        name: filename
+      success: result[:success],
+      elementkey: element_key,
+      error: result[:error],
+      name: filename
     }
   end
 
@@ -47,7 +47,7 @@ class FileuploadController < ApplicationController
     tempfile.rewind
     if create_thumbnail_result[:success]
       logger.info "Upload preview file"
-      thumbnail_result = keytechAPI.files.upload_quickpreview(element_key,
+      thumbnail_result = keytechAPI.element_handler.file_handler.upload_quickpreview(element_key,
                     create_thumbnail_result[:filename],
                     original_filename)
 
@@ -55,7 +55,7 @@ class FileuploadController < ApplicationController
     else
       # delete old thumbnail!
       logger.info " Could not automagically create a preview. Removing, so image server can handle this"
-      keytechAPI.files.remove_quickpreview(element_key)
+      keytechAPI.element_handler.file_handler.remove_quickpreview(element_key)
     end
   end
 

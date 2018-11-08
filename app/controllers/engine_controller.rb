@@ -49,7 +49,7 @@ class EngineController < ApplicationController
   def new_element
     # collect element data
     class_key = params[:classKey]
-    element = keytechAPI.elements.newElement(class_key)
+    element = keytechAPI.element_handler.new_element(class_key)
 
     # Layout holds all controls to fill
     layout = getLayout(class_key)
@@ -76,7 +76,7 @@ class EngineController < ApplicationController
       redirect_back(fallback_location: root_path)
     end
 
-    saved_element = keytechAPI.elements.save(element)
+    saved_element = keytechAPI.element_handler.save(element)
     # Save ok? If not create a warning and rebuild
     logger.info "New element saved: #{saved_element.key}"
     if saved_element.blank?
@@ -102,9 +102,13 @@ class EngineController < ApplicationController
 
     @element_key = params[:elementKey]
     @attribute_type = params[:attributeType]
-    @element = keytechAPI.elements.load(@element_key, attributes: 'all')
+    @element = keytechAPI.element_handler.load(@element_key, attributes: 'all')
     @field_value = @element.keyValueList[@attribute]
 
+    render_attribute_field
+  end
+
+  def render_attribute_field
     if @attribute_type == 'text'
       render 'forms/text_editor', layout: 'attribute_form'
     end
@@ -141,21 +145,21 @@ class EngineController < ApplicationController
       data_dictionary_json = params['datadictionary_field_' + attribute]
       data_dictionary_id = params[:datadictionary_id]
 
-      element = keytechAPI.elements.newElement(element_key)
+      element = keytechAPI.element_handler.new_element(element_key)
       if data_dictionary_id.blank?
         element.keyValueList[attribute] = value
       else
         update_data_dictionary_field(element, data_dictionary_id, data_dictionary_json)
       end
 
-      updated_element = keytechAPI.elements.update(element)
+      updated_element = keytechAPI.element_handler.update(element)
 
       show_updated_element(updated_element)
     end
   end
 
   def checkserver
-    server_check_result = current_user.hasValidConnection?
+    server_check_result = current_user.connection_valid?
     render json: { available: server_check_result }
   end
 
@@ -196,13 +200,13 @@ class EngineController < ApplicationController
 
   def getDataDictionaryDefinition(ddID)
     Rails.cache.fetch("#{current_user.cache_key}/datadictionary/#{ddID}", expires_in: 1.hours) do
-      keytechAPI.dataDictionaries.getDefinition(ddID)
+      keytechAPI.data_dictionary_handler.getDefinition(ddID)
     end
   end
 
   def getDataDictionaryData(ddID)
     Rails.cache.fetch("#{current_user.cache_key}/datadictionary/#{ddID}/data", expires_in: 1.hours) do
-      keytechAPI.dataDictionaries.getData(ddID)
+      keytechAPI.data_dictionary_handler.getData(ddID)
     end
   end
 

@@ -38,7 +38,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.structure(params[:id], attributes: 'lister')
+        @elements = keytechAPI.element_handler.structure(params[:id], attributes: 'lister')
         simplify_key_value_list(@elements)
         sort_elements
       else
@@ -60,7 +60,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_lister_layout
-        @elements = keytechAPI.elements.whereused(params[:id], attributes: 'all')
+        @elements = keytechAPI.element_handler.whereused(params[:id], attributes: 'all')
         simplify_key_value_list(@elements)
         sort_elements
       else
@@ -78,7 +78,7 @@ class ElementsController < ApplicationController
       load_element('none')
       if !@element.nil?
         load_element_tabs
-        @notes = keytechAPI.notes.load(@element.key)
+        @notes = keytechAPI.element_handler.note_handler.load(@element.key)
       else
         flash_element_not_found
       end
@@ -95,7 +95,7 @@ class ElementsController < ApplicationController
       load_element('none')
       if !@element.nil?
         load_element_tabs
-        @mails = keytechAPI.elements.mails(@element.key)
+        @mails = keytechAPI.element_handler.mails(@element.key)
       else
         flash_element_not_found
       end
@@ -124,7 +124,7 @@ class ElementsController < ApplicationController
       if !@element.nil?
         load_element_tabs
         load_bom_layout
-        @elements = keytechAPI.elements.billOfMaterial(params[:id], attributes: 'lister')
+        @elements = keytechAPI.element_handler.billOfMaterial(params[:id], attributes: 'lister')
         sort_elements
       else
         flash_element_not_found
@@ -165,21 +165,22 @@ class ElementsController < ApplicationController
 
   def masterfile
     # Load masterfile from elementID
-    masterfilename = keytechAPI.files.masterfile_name(params[:id])
-    files = keytechAPI.files.load_masterfile(params[:id])
+    file_handler = keytechAPI.element_handler.file_handler
+    masterfilename = file_handler.masterfile_name(params[:id])
+    files = file_handler.load_masterfile(params[:id])
     send_data files, type: files.content_type, disposition: 'attachment', filename: masterfilename
   end
 
   def thumbnail
     element_key = params[:id]
-    image = keytechAPI.elements.thumbnail(element_key)
+    image = keytechAPI.element_handler.thumbnail(element_key)
     # response.headers['Cache-Control'] = 'public, max-age=3600'
     send_data image, type: image.content_type, disposition: 'inline'
   end
 
   def preview
     element_key = params[:id]
-    image = keytechAPI.elements.preview(element_key)
+    image = keytechAPI.element_handler.preview(element_key)
     # response.headers['Cache-Control'] = 'public, max-age=3600'
     send_data image, type: image.content_type, disposition: 'inline'
   end
@@ -187,9 +188,9 @@ class ElementsController < ApplicationController
   def destroy
     if user_signed_in?
       # rescue where used, if any
-      whereused = keytechAPI.elements.whereused(params[:id], { attributes: 'none' })
+      whereused = keytechAPI.element_handler.whereused(params[:id], { attributes: 'none' })
 
-      result = keytechAPI.elements.delete(params[:id])
+      result = keytechAPI.element_handler.delete(params[:id])
       if result.success?
         flash[:info] = 'Element wurde gelöscht.'
       else
@@ -250,9 +251,9 @@ class ElementsController < ApplicationController
       @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
     end
 
-    @hasMasterfile = keytechAPI.files.has_masterfile(@element.key)
+    @hasMasterfile = keytechAPI.element_handler.file_handler.masterfile?(@element.key)
     if @hasMasterfile == true
-      @masterfileInfo = keytechAPI.files.masterfile_info(@element.key)
+      @masterfileInfo = keytechAPI.element_handler.file_handler.masterfile_info(@element.key)
     end
   end
 
@@ -265,7 +266,7 @@ class ElementsController < ApplicationController
     # If ID.startWith BOM - then load Article (default_mi)
     element_key = params[:id]
     logger.debug "Load element with key: #{element_key}"
-    @element = keytechAPI.elements.load(element_key, attributes: attributes)
+    @element = keytechAPI.element_handler.load(element_key, attributes: attributes)
   end
 
   def keytechAPI

@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   def home
     if user_signed_in?
 
-      if current_user.hasValidConnection?
+      if current_user.connection_valid?
         @favorites = current_user.favorites
         @queries = current_user.queries
         @keytech_username = current_user.keytech_username

@@ -23,7 +23,7 @@ class UsersController < ApplicationController
 
   def update_keytech_settings
     current_user.update_attributes(keytech_params)
-    if !current_user.hasValidConnection?
+    if !current_user.connection_valid?
       redirect_to keytech_settings_path, alert: 'keytech URL, Benutzername oder Passwort falsch'
     else
       redirect_to keytech_settings_path, notice: 'Gespeichert'

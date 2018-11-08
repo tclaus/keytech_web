@@ -15,7 +15,7 @@ class User < ApplicationRecord
 
   validates :name,  presence: false, length: { maximum: 50 }
 
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i.freeze
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
@@ -26,8 +26,8 @@ class User < ApplicationRecord
     self.keytech_password = ENV['KEYTECH_PASSWORD']
   end
 
-  def hasValidConnection?
-    !keytechAPI.currentUser.blank?
+  def connection_valid?
+    !keytechAPI.current_user.blank?
   rescue Exception => exc
     logger.error("Invalid keytech credentials or server not found #{exc.message}")
     false
@@ -35,20 +35,20 @@ class User < ApplicationRecord
 
   def favorites
     Rails.cache.fetch("#{cache_key}/favorites", expires_in: 3.minute) do
-      keytechAPI.currentUser.favorites
+      keytechAPI.current_user.favorites
     end
   end
 
   def queries
     Rails.cache.fetch("#{cache_key}/queries", expires_in: 3.minute) do
-      keytechAPI.currentUser.queries(withSystemQueries: 'all', ignoreTypes: 'attributes')
+      keytechAPI.current_user.queries(withSystemQueries: 'all', ignoreTypes: 'attributes')
     end
   end
 
   # returns current keytech kit object
   def keytechAPI
     if @keytechAPI.nil?
-      @keytechAPI = KeytechKit::Keytech_Kit.new(keytech_url, keytech_username, keytech_password)
+      @keytechAPI = KeytechKit::KeytechKit.new(keytech_url, keytech_username, keytech_password)
     end
     @keytechAPI
   end
