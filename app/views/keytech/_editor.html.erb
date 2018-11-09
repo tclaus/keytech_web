@@ -2,7 +2,7 @@
 <div class="row">
   <div class="col-md-3">
     <% if classType(@element.key) == "DO" %>
-      <%= image_tag preview_element_path(tag: @element.changedAt ), class: "thumbnail_modalable", :"data-toggle"=> "modal", :"data-target" => "#exampleModal", id: "thumbnail" %>
+      <%= image_tag preview_element_path(tag: @element.changedAt ), class: "thumbnail_modalable", "data-toggle": "modal", "data-target": "#exampleModal", id: "thumbnail" %>
     <% else %>
       <%= image_tag preview_element_path, class: "thumbnail" %>
     <% end %>
@@ -53,7 +53,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <%= image_tag preview_element_path(tag: @element.changedAt), class: "thumbnail_modal", id: "thumbnail"  %>
+        <%= image_tag preview_element_path(tag: @element.changedAt), class: "thumbnail_modal", id: "thumbnail-modal"  %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Schliessen</button>

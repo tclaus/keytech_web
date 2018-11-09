@@ -47,6 +47,9 @@ function loadPreview(element_key) {
   $('#thumbnail').fadeOut();
   $('#thumbnail').attr("src",preview_url);
   $('#thumbnail').fadeIn();
+
+  // Modal window
+  $('#thumbnail-modal').attr("src",preview_url);
 }
 
 function randomNumber() {
