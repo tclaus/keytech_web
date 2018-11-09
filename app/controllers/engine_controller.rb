@@ -73,7 +73,7 @@ class EngineController < ApplicationController
     unless errors.empty?
       logger.error "Errors occured: #{errors.inspect}"
       flash[:warning] = errors
-      redirect_back(fallback_location: root_path)
+      return redirect_back(fallback_location: root_path)
     end
 
     saved_element = keytechAPI.element_handler.save(element)

@@ -28,6 +28,5 @@
 //= require file_uploads/jquery.fileupload
 //= require file_uploads/main_fileupload
 
-//= require bootstrap-datepicker
 //= require bootstrap-datepicker/core
-//= require bootstrap-datepicker/locales/bootstrap-datepicker.de
+//= require bootstrap-datepicker/locales/bootstrap-datepicker.de.js
