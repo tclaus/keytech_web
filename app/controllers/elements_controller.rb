@@ -151,7 +151,9 @@ class ElementsController < ApplicationController
 
       @search_response_header = keytechAPI.search.query(options)
 
+      logger.info "Group BY: #{@search_response_header.groupBy.values.inspect}"
       sort_groupby_values(@search_response_header.groupBy)
+      logger.info "Group BY: #{@search_response_header.groupBy.values.inspect}"
 
       @elements = @search_response_header.elementList
       simplify_key_value_list(@elements)
@@ -274,7 +276,7 @@ class ElementsController < ApplicationController
   end
 
   def sort_groupby_values(group_by)
-    Hash[group_by.values.sort_by { |_k, v| -v }].to_h unless group_by.nil?
+    group_by.values = Hash[group_by.values.sort_by { |_k, v| -v }].to_h unless group_by.nil?
   end
 
   def sort_elements
