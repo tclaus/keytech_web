@@ -7,15 +7,15 @@
         <li>
           <%= link_to show_element_path(fav.targetElementKey) do %>
             <div class="icon-small">
-              <% if classType(fav.targetElementKey) == "FD" %>
+              <% if class_type(fav.targetElementKey) == "FD" %>
                 <i class="far fa-folder"></i><%= fav.entryName %>
               <% end %>
 
-              <% if classType(fav.targetElementKey) == "DO" %>
+              <% if class_type(fav.targetElementKey) == "DO" %>
                 <i class="far fa-file"></i><%= fav.entryName %>
               <% end %>
 
-              <% if classType(fav.targetElementKey) == "MI" %>
+              <% if class_type(fav.targetElementKey) == "MI" %>
                 <i class="fas fa-cog"></i><%= fav.entryName %>
               <% end %>
             </div>

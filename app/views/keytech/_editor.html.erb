@@ -1,12 +1,12 @@
 <% meta_tag :page_title, "Editor: #{@element.displayname}" %>
 <div class="row">
   <div class="col-md-3">
-    <% if classType(@element.key) == "DO" %>
+    <% if class_type(@element.key) == "DO" %>
       <%= image_tag preview_element_path(tag: @element.changedAt ), class: "thumbnail_modalable", "data-toggle": "modal", "data-target": "#exampleModal", id: "thumbnail" %>
     <% else %>
       <%= image_tag preview_element_path, class: "thumbnail" %>
     <% end %>
-    <% if classType(@element.key) == "DO" %>
+    <% if class_type(@element.key) == "DO" %>
       <% if @hasMasterfile %>
         <%= link_to masterfile_element_path do %>
 

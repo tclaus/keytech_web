@@ -14,11 +14,10 @@ class ElementsController < ApplicationController
 
       load_my_keytech
       load_element
+      transform_element_fields(@element)
       if !@element.nil?
         load_element_tabs
-        @layout = keytechAPI.layouts.main_layout(
-          classkey(@element.key)
-        )
+        @layout = keytechAPI.layouts.main_layout(helpers.class_key(@element.key))
       else
         flash_element_not_found
       end
@@ -40,6 +39,7 @@ class ElementsController < ApplicationController
         load_lister_layout
         @elements = keytechAPI.element_handler.structure(params[:id], attributes: 'lister')
         simplify_key_value_list(@elements)
+        transform_elements_fields(@elements)
         sort_elements
       else
         flash_element_not_found
@@ -62,6 +62,7 @@ class ElementsController < ApplicationController
         load_lister_layout
         @elements = keytechAPI.element_handler.whereused(params[:id], attributes: 'all')
         simplify_key_value_list(@elements)
+        transform_elements_fields(@elements)
         sort_elements
       else
         flash_element_not_found
@@ -143,19 +144,17 @@ class ElementsController < ApplicationController
 
       @layout = load_lister_layout
       options = { q: params[:q],
-                byQuery: params[:byquery],
-                groupBy: 'classkey',
-                classes: params[:classes],
-                attributes: 'lister',
-                sortBy: sort_by }
+                  byQuery: params[:byquery],
+                  groupBy: 'classkey',
+                  classes: params[:classes],
+                  attributes: 'lister',
+                  sortBy: sort_by }
 
       @search_response_header = keytechAPI.search.query(options)
-
-      logger.info "Group BY: #{@search_response_header.groupBy.values.inspect}"
       sort_groupby_values(@search_response_header.groupBy)
-      logger.info "Group BY: #{@search_response_header.groupBy.values.inspect}"
 
       @elements = @search_response_header.elementList
+      transform_elements_fields(@elements)
       simplify_key_value_list(@elements)
       # TODO: Load in another controller?
       render 'keytech/_search_results'
@@ -190,7 +189,7 @@ class ElementsController < ApplicationController
   def destroy
     if user_signed_in?
       # rescue where used, if any
-      whereused = keytechAPI.element_handler.whereused(params[:id], { attributes: 'none' })
+      whereused = keytechAPI.element_handler.whereused(params[:id], attributes: 'none')
 
       result = keytechAPI.element_handler.delete(params[:id])
       if result.success?
@@ -213,6 +212,74 @@ class ElementsController < ApplicationController
   def flash_element_not_found
     # After delete there is no element!
     # flash[:warning] = "Ein Element mit dieser Nummer wurde nicht gefunden"
+  end
+
+  # Changes index Values from distinct fields to display values on some
+  # element types
+  def transform_elements_fields(elements)
+    # keytech does not send layout data with data dictioniers for switched types
+    # TASK_MAF / MAIL_WF
+    # MailCategories,
+    # TaskCategories
+    # TaskConditions
+    # TaskStatus
+    # TaskPriority
+    # MailPriority
+    elements.each do |element|
+      class_key = helpers.class_key(element.key)
+
+      if ['TASK_WF', 'MAIL_WF'].include?(class_key)
+        transform_element_fields(element)
+      end
+    end
+  end
+
+  def transform_element_fields(element)
+
+    element.keyValueList.each do |key, value|
+      transform_status(element, key, value) if key == 'as_sfd__status'
+      transform_category(element, key, value) if key == 'as_sfd__category'
+      transform_priority(element, key, value) if key == 'as_sfd__priority'
+    end
+  end
+
+  def transform_status(element, key, value)
+    if helpers.class_key(element.key) == 'TASK_WF'
+      data = data_dictionary('TaskStatus') # sets 'data'
+      data.each do |status_value|
+        if status_value['statusvalue'] == value
+          element.keyValueList[key] = status_value['status']
+        end
+      end
+    end
+  end
+
+  def transform_category(element, key, value)
+    data = if helpers.class_key(element.key) == 'TASK_WF'
+             data_dictionary('TaskCategories')
+           else
+             data_dictionary('MailCategories')
+           end
+    element.keyValueList[key] = ''
+    data.each do |task_value|
+      if task_value['categoryvalue'] == value
+        element.keyValueList[key] = task_value['category']
+      end
+    end
+  end
+
+  def transform_priority(element, key, value)
+    data = if helpers.class_key(element.key) == 'TASK_WF'
+             data_dictionary('TaskCategories') # sets 'data'
+           else
+             data_dictionary('MailCategories') # sets 'data'
+           end
+    element.keyValueList[key] = ''
+    data.each do |task_value|
+      if task_value['priorityvalue'] == value
+        element.keyValueList[key] = task_value['priority']
+      end
+    end
   end
 
   # Removes the prefix as_do__,  as_sdo__ .. from all keys in keyValueList.
@@ -242,6 +309,12 @@ class ElementsController < ApplicationController
     end
   end
 
+  def data_dictionary(datadictionary)
+    Rails.cache.fetch("#{current_user.cache_key}/#{datadictionary}", expires_in: 1.hours) do
+      keytechAPI.data_dictionary_handler.getData(datadictionary)
+    end
+  end
+
   def load_bom_layout
     @layout = Rails.cache.fetch("#{current_user.cache_key}/bom_lister_layout", expires_in: 1.hours) do
       keytechAPI.layouts.bom_lister_layout
@@ -250,17 +323,13 @@ class ElementsController < ApplicationController
 
   def load_element_tabs
     @subareas = Rails.cache.fetch("#{current_user.cache_key}/#{@element.key}/subareas", expires_in: 1.hours) do
-      @subareas = keytechAPI.classes.load(classkey(@element.key)).availableSubareas
+      @subareas = keytechAPI.classes.load(helpers.class_key(@element.key)).availableSubareas
     end
 
     @hasMasterfile = keytechAPI.element_handler.file_handler.masterfile?(@element.key)
     if @hasMasterfile == true
       @masterfileInfo = keytechAPI.element_handler.file_handler.masterfile_info(@element.key)
     end
-  end
-
-  def classkey(element_key)
-    element_key.split(':').first
   end
 
   # Loads the element. Can set @element to nil
@@ -290,24 +359,23 @@ class ElementsController < ApplicationController
     end
   end
 
-  def element_compare(column, a, b)
+  def element_compare(column, first, second)
     # Check well known attributes
-    return a.createdByLong <=> b.createdByLong if column == 'created_by'
-
-    return a.changedByLong <=> b.changedByLong if column == 'changed_by'
-
-    return a.displayname <=> b.displayname if column == 'displayname'
+    return first.createdByLong <=> second.createdByLong if column == 'created_by'
+    return first.changedByLong <=> second.changedByLong if column == 'changed_by'
+    return first.displayname <=> second.displayname if column == 'displayname'
 
     if column == 'classname'
-      return helpers.class_displayname(helpers.classKey(a.key)) <=> helpers.class_displayname(helpers.classKey(b.key))
+      first_class_key = helpers.class_key(first.key)
+      second_class_key = helpers.class_key(second.key)
+      return helpers.class_displayname(first_class_key) <=> helpers.class_displayname(second_class_key)
     end
 
     # Check key value
-    valueA = a.keyValueList[column]
-    valueB = b.keyValueList[column]
+    valueA = first.keyValueList[column]
+    valueB = second.keyValueList[column]
     valueA = '' if valueA.nil?
     valueB = '' if valueB.nil?
     valueA <=> valueB
   end
-
 end

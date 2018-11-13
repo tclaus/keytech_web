@@ -1,8 +1,6 @@
 module ElementsHelper
   def class_displayname(class_key)
-    if class_key.casecmp('default_mi').zero?
-      return 'Artikel'
-    end
+    return 'Artikel' if class_key.casecmp('default_mi').zero?
 
     Rails.cache.fetch("#{class_key}/displayname", expires_in: 12.hours) do
       class_definition = current_user.keytechAPI.classes.load(class_key)
@@ -11,13 +9,14 @@ module ElementsHelper
   end
 
   # Translates a elementkey MISC_FILE:123 to a classkey: MISC_FILE
-  def classKey(element_key)
+  def class_key(element_key)
     element_key.split(':').first
   end
 
-  # Returns a String value of "DO","MI" or "FD" to indicate that the elementkey refers to a Document, MasterItem or is a Folder
-  def classType(element_key)
-    class_key = self.classKey(element_key)
+  # Returns a String value of "DO","MI" or "FD" to indicate that the elementkey
+  # refers to a Document, MasterItem or is a Folder
+  def class_type(element_key)
+    class_key = class_key(element_key)
     return 'MI' if class_key.upcase.end_with?('_MI')
 
     return 'FD' if class_key.upcase.end_with?('_FD', '_WF')
@@ -35,7 +34,7 @@ module ElementsHelper
     return element.displayname if attribute_name == 'displayname'
 
     if attribute_name == 'classname'
-      return class_displayname(classKey(element.key))
+      return class_displayname(class_key(element.key))
     end
 
     # Check key value
