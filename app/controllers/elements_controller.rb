@@ -235,11 +235,12 @@ class ElementsController < ApplicationController
   end
 
   def transform_element_fields(element)
-
-    element.keyValueList.each do |key, value|
-      transform_status(element, key, value) if key == 'as_sfd__status'
-      transform_category(element, key, value) if key == 'as_sfd__category'
-      transform_priority(element, key, value) if key == 'as_sfd__priority'
+    unless element.nil?
+      element.keyValueList.each do |key, value|
+        transform_status(element, key, value) if key == 'as_sfd__status'
+        transform_category(element, key, value) if key == 'as_sfd__category'
+        transform_priority(element, key, value) if key == 'as_sfd__priority'
+      end
     end
   end
 

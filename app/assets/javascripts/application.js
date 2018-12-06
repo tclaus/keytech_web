@@ -20,6 +20,8 @@
 //= require bootstrap
 //= require flash_messages
 //= require add_element
+//= require add_note
+//= require delete_note
 //= require check_keytech_server
 //= require vue.min
 //= require edit_mode_controller

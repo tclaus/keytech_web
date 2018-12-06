@@ -8,6 +8,30 @@ class EngineController < ApplicationController
     render 'elements/show_class_list', layout: 'modal'
   end
 
+  # Renders a simple data dialog
+  def show_new_note_dialog
+    load_note_types(params[:element_key])
+    @element_key = params[:element_key]
+    render 'elements/new_note_dialog', layout: 'modal_edit_element'
+  end
+
+  def delete_note
+    puts "Delet Note! #{params[:id]}"
+    note = keytech_note_handler.create('', params[:element_key])
+    note.id = params[:id]
+    keytech_note_handler.remove(note)
+  end
+
+  # Adds a new note to element
+  def create_new_note
+    note_type = params[:note_type][:note_type_id]
+    new_note = keytech_note_handler.create(note_type, params[:element_key])
+    new_note.subject = params[:subject]
+    new_note.text = params[:body]
+    note_id = keytech_note_handler.save(new_note) # Save wil create a new note or update an
+    # go back to something
+  end
+
   # returns a json with full classlist
   #
   def show_classes
@@ -210,16 +234,27 @@ class EngineController < ApplicationController
     end
   end
 
-  def getClassDefinition(classKey)
-    Rails.cache.fetch("#{current_user.cache_key}/#{classKey}", expires_in: 1.hours) do
-      keytechAPI.classes.load(classKey)
+  def getClassDefinition(class_key)
+    Rails.cache.fetch("#{current_user.cache_key}/#{class_key}", expires_in: 1.hours) do
+      keytechAPI.classes.load(class_key)
     end
   end
 
-  def getLayout(classKey)
-    Rails.cache.fetch("#{current_user.cache_key}/#{classKey}/main_layout", expires_in: 1.hours) do
-      keytechAPI.layouts.main_layout(classKey)
+  def getLayout(class_key)
+    Rails.cache.fetch("#{current_user.cache_key}/#{class_key}/main_layout", expires_in: 1.hours) do
+      keytechAPI.layouts.main_layout(class_key)
     end
+  end
+
+  def load_note_types(element_key)
+    @note_types = Rails.cache.fetch("#{current_user.cache_key}/#{element_key}/notetypes", expires_in: 1.hours) do
+      # TODO: load Notetypes be element permissions
+      @note_types = keytech_note_handler.load_note_types
+    end
+  end
+
+  def keytech_note_handler
+    keytechAPI.element_handler.note_handler
   end
 
   def keytechAPI

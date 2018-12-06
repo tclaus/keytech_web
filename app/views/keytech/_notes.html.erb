@@ -1,4 +1,14 @@
 <% meta_tag :page_title, "Notizen: #{@element.displayname}" %>
+
+<div class="d-flex flex-row-reverse bd-highlight">
+  <div class="p-2 bd-highlight">
+    <div class="action" id="add_note" data-element-key="<%= @element.key %>">
+      <i class="far fa-plus" data-toggle="tooltip" data-placement="top" title="Neue Notiz anlegen"></i>
+    </div>
+  </div>
+
+</div>
+
 <% if @notes.empty? %>
   <div class="card">
     <div class="card-body">
@@ -14,14 +24,21 @@
 
 <% @notes.each do |note| %>
   <div class="card">
+    <div class="d-flex flex-row-reverse bd-highlight">
+      <div class="p-2 bd-highlight">
+        <%= link_to '/engine/notes/' + note.id.to_s + '?element_key=' + note.element_key, method: :delete, remote: true, data: {confirm: "Möchten Sie diese Notiz wirklich löschen?"}, class:"remove-note"  do %>
+          <i class="far fa-trash-alt" data-toggle="tooltip" data-placement="top" title="Notiz löschen"></i>
+        <% end %>
+      </div>
+    </div>
     <div class="card-body">
       <h5 class="card-title"><%= note.subject %></h5>
       <h6 class="card-subtitle mb-2 text-muted"><%= parse_value(note.createdAt) %></h6>
       <h6 class="card-subtitle mb-2 text-muted"><%= note.createdByLong %></h6>
       <p class="card-text">
+      <p class="card-text">
         <%= note.text %>
       </p>
     </div>
   </div>
-  <hr>
 <% end %>

@@ -44,6 +44,11 @@ Rails.application.routes.draw do
   get 'engine/classes', to: 'engine#show_classes'
   get 'engine/checkserver', to: 'engine#checkserver'
 
+  # Show new note dialog
+  get 'engine/new_note', to: 'engine#show_new_note_dialog'
+  post 'engine/new_note', to: 'engine#create_new_note'
+  delete 'engine/notes/:id', to: 'engine#delete_note'
+  
   # Show element properties
   get 'engine/newelement', to: 'engine#show_new_element_dialog'
   post '/engine/newelement', to: 'engine#new_element'
