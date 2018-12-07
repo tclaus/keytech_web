@@ -16,7 +16,7 @@ class EngineController < ApplicationController
   end
 
   def delete_note
-    puts "Delet Note! #{params[:id]}"
+    puts "Delete Note! #{params[:id]}"
     note = keytech_note_handler.create('', params[:element_key])
     note.id = params[:id]
     keytech_note_handler.remove(note)
@@ -28,8 +28,13 @@ class EngineController < ApplicationController
     new_note = keytech_note_handler.create(note_type, params[:element_key])
     new_note.subject = params[:subject]
     new_note.text = params[:body]
-    note_id = keytech_note_handler.save(new_note) # Save wil create a new note or update an
-    # go back to something
+    response = keytech_note_handler.save(new_note)
+    if response[:success] == true
+      flash[:info] = 'Notiz wurde angelegt'
+    else
+      flash[:error] = "Notiz konnte nicht angelegt werden: #{response[:error]}"
+    end
+    redirect_to "/element/#{params[:element_key]}/notes"
   end
 
   # returns a json with full classlist
