@@ -46,7 +46,7 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'keytechkit' #, :path => '/Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem'
+gem 'keytechkit', '~> 1.0', '>= 1.0.1' #, :path => '/Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem'
 
 gem 'redis'
 gem 'resque'
@@ -72,6 +72,8 @@ end
 group :development do
   # Access an IRB console on exception pages or by using <%= console %>
   # anywhere in the code.
+
+  gem 'sqlite3', '~> 1.3.6'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
   # Spring speeds up development by keeping your application running in the
