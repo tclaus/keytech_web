@@ -7,27 +7,36 @@
     <h2>keytech Web-API Einstellungen</h2>
     <hr>
     <%= form_for current_user, url: keytech_settings_path, html: { method: :put } do |f| %>
+      <div class="field">
+        <%= f.label :keytech_url, class: "sr-only" %><br/>
+        <%= f.url_field :keytech_url, autofocus: true, autocomplete: "url",placeholder: "keytech URL", class:"form-control" %>
+      </div>
 
-    <div class="field">
-      <%= f.label :keytech_url, class: "sr-only" %><br/>
-      <%= f.url_field :keytech_url, autofocus: true, autocomplete: "url",placeholder: "keytech URL", class:"form-control" %>
-    </div>
+      <div class="field">
+        <%= f.label :keytech_username, class: "sr-only" %><br/>
+        <%= f.text_field :keytech_username, autocomplete: "username", placeholder: "keytech Benutzername", class:"form-control" %>
+      </div>
 
-    <div class="field">
-      <%= f.label :keytech_username, class: "sr-only" %><br/>
-      <%= f.text_field :keytech_username, autocomplete: "username", placeholder: "keytech Benutzername", class:"form-control" %>
-    </div>
-
-    <div class="field">
-      <%= f.label :keytech_password, class: "sr-only" %>
-      <i>(Alle keytech Anmeldedaten werden verschlüsselt gespeichert)</i><br/>
-      <%= f.password_field :keytech_password, autocomplete: "password",placeholder:"keytech Passwort", class:"form-control" %>
-    </div>
-    <%= link_to 'Öffentlichen Demo Server benutzen',set_keytech_demo_server_path , method: :put%>
+      <div class="field">
+        <%= f.label :keytech_password, class: "sr-only" %>
+        <i>(Alle keytech Anmeldedaten werden verschlüsselt gespeichert)</i><br/>
+        <%= f.password_field :keytech_password, autocomplete: "password",placeholder:"keytech Passwort", class:"form-control" %>
+      </div>
+      <%= link_to 'Öffentlichen Demo Server benutzen',set_keytech_demo_server_path , method: :put%>
+      <br>
+      <div class="actions">
+        <%= f.submit "Aktualisieren", class:"btn btn-lg btn-primary btn-block" %>
+      </div>
+    <% end %>
     <br>
-    <div class="actions">
-      <%= f.submit "Aktualisieren", class:"btn btn-lg btn-primary btn-block" %>
+    <div>
+      Beschreibung: <%= @server_description %>
     </div>
-  <% end %>
-</div>
+    <div class="">
+      API-Version: <%= @api_version %>
+    </div>
+    <div>
+      Datenbank-Version: <%= @database_version %>
+    </div>
+  </div>
 </div>

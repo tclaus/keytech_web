@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   before_action :authenticate_user!
 
@@ -19,7 +21,15 @@ class UsersController < ApplicationController
   # GET /users/1/edit
   def edit; end
 
-  def edit_keytech_settings; end
+  def edit_keytech_settings
+    if current_user.connection_valid?
+      serverinfo = current_user.keytechAPI.serverinfo
+      @server_description = serverinfo.description
+      @api_version = serverinfo.api_version
+      @database_version = serverinfo.database_version
+      @raw_info = serverinfo.response
+    end
+  end
 
   def update_keytech_settings
     current_user.update_attributes(keytech_params)

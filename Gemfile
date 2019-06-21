@@ -45,7 +45,7 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'keytechkit', '~> 1.0', '>= 1.0.1' #, :path => '/Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem'
+gem 'keytechkit', '~> 1.1' # , :path => '/Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem'
 
 gem 'redis'
 gem 'resque'
