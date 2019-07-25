@@ -16,6 +16,10 @@ Rails.application.routes.draw do
     put 'set_keytech_demo_server' => :set_keytech_demo_server
   end
 
+ controller :classes do
+   get 'class_list' => :class_list
+ end
+
   get 'dashboard', to: 'application#dashboard'
 
   get 'search', to: 'elements#search', as: 'search_element'
@@ -48,7 +52,7 @@ Rails.application.routes.draw do
   get 'engine/new_note', to: 'engine#show_new_note_dialog'
   post 'engine/new_note', to: 'engine#create_new_note'
   delete 'engine/notes/:id', to: 'engine#delete_note'
-  
+
   # Show element properties
   get 'engine/newelement', to: 'engine#show_new_element_dialog'
   post '/engine/newelement', to: 'engine#new_element'

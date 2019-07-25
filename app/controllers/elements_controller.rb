@@ -341,10 +341,6 @@ class ElementsController < ApplicationController
     @element = keytechAPI.element_handler.load(element_key, attributes: attributes)
   end
 
-  def keytechAPI
-    current_user.keytechAPI
-  end
-
   def sort_groupby_values(group_by)
     group_by.values = Hash[group_by.values.sort_by { |_k, v| -v }].to_h unless group_by.nil?
   end

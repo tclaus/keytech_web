@@ -1,4 +1,9 @@
 module ElementsHelper
+
+  def keytechAPI
+    current_user.keytechAPI
+  end
+
   def class_displayname(class_key)
     return 'Artikel' if class_key.casecmp('default_mi').zero?
 
