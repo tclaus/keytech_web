@@ -88,6 +88,7 @@ class ApplicationController < ActionController::Base
   end
 
   # Executes query from api for recent changes
+  # Loads recent changes and creations
   def load_dashboard_from_api
     logger.info 'Loading dashboard...'
     max_elements = 5
@@ -98,11 +99,12 @@ class ApplicationController < ActionController::Base
 
     self_created = keytechAPI.search.query(options)
 
-    options = { fields: "created_by!=#{username}:changed_by=#{username}:changed_at>#{from_date}",
+    options = { fields: "created_by=#{username}:changed_at>#{from_date}",
                 size: max_elements,
                 sortBy: 'changed_at,desc' }
     self_changed = keytechAPI.search.query(options)
-
+    logger.debug "Changed items: #{self_changed}"
+    logger.debug "Created Items: #{self_created}"
     element_list = (self_created.elementList + self_changed.elementList)
     logger.info 'Finished loading dashboard'
     element_list.sort_by!(&:changedAt)
