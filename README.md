@@ -108,13 +108,13 @@ $: rails s
 
     => Booting Puma
 
-    => Rails 5.2.0 application starting in development
+    => Rails 5.2.4 application starting in development
 
     => Run `rails server -h` for more startup options
 
     Puma starting in single mode...
 
-    * Version 3.11.4 (ruby 2.5.1-p57), codename: Love Song
+    * Version 3.12.2 (ruby 2.5.1-p57), codename: Love Song
 
     * Min threads: 5, max threads: 5
 
@@ -148,6 +148,3 @@ Development:
 to set database to latest state.
 
 In Procfile there is a line 'release: bundle exec rake db:migrate' that should do the DB:Migration task automatically on deployment.
-
-Bulk Update Locations:
-  $: rake geocode:all CLASS=Location SLEEP=0.25
