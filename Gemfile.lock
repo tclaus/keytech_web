@@ -56,7 +56,7 @@ GEM
       sassc-rails (>= 2.0.0)
     bootstrap-datepicker-rails (1.8.0.1)
       railties (>= 3.0)
-    builder (3.2.3)
+    builder (3.2.4)
     byebug (11.0.1)
     capybara (2.18.0)
       addressable
@@ -81,8 +81,8 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    devise-i18n (1.8.2)
-      devise (>= 4.6)
+    devise-i18n (1.9.0)
+      devise (>= 4.7.1)
     dotenv (2.7.5)
     dotenv-rails (2.7.5)
       dotenv (= 2.7.5)
@@ -138,7 +138,7 @@ GEM
     pg (1.1.4)
     popper_js (1.14.5)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.2)
     rack (2.0.7)
     rack-protection (2.0.7)
       rack
@@ -274,7 +274,7 @@ DEPENDENCIES
   listen (>= 3.0.5, < 3.2)
   lizard (~> 1.0)
   pg
-  puma (~> 3.7)
+  puma (~> 3.12)
   rails (~> 5.2.1)
   rails-assets-jquery-validate!
   redis
@@ -291,7 +291,7 @@ DEPENDENCIES
   web-console (>= 3.3.0)
 
 RUBY VERSION
-   ruby 2.5.5p157
+   ruby 2.5.7p206
 
 BUNDLED WITH
    1.17.3
