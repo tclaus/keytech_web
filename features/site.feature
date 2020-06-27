@@ -6,4 +6,4 @@ File Upload handler by:
 Document Preview
  - See fileupload_controller
     For Filetypes of png, jpg or gif a thumbnail is created.
-    keytch API seems to have problems so thow this correctly
+    keytch API seems to have problems so show this correctly

@@ -1,7 +1,7 @@
 # README
 
-This is keytech plm-web.
-Its a web-UI for accessing the keytech web api. keytech is one of the major german plm/dms software developer.
+This is keytech Plm-Web.
+Plm Web a web-UI for accessing the keytech api. keytech is one of the major german plm/dms software developer.
 
 This repository is not maintained or supported by keytech in any way.
 
