@@ -16,7 +16,7 @@
         <div>&nbsp;</div>
       </li>
       <li class="nav-item">
-        <div class="action" id="add_element" data-toggle="tooltip" data-placement="top" title="Neues Element anlegen"><i class="far fa-plus-square fa-2x"></i></div>
+        <button type="button" id="add_element" class="btn btn-success btn-sm"><i class="far fa-plus-square fa-1x"></i><span class="create-new-button-text">Neu Anlegen...</span></button>
       </li>
     </ul>
     <% if (!user_signed_in?) %>
@@ -28,7 +28,7 @@
     <% end %>
     <% if (user_signed_in?) %>
       <%= form_tag("/search", method: "get", class:"form-inline my-2 my-lg-0") do %>
-        <%= text_field_tag(:q, params[:q], class: "form-control mr-sm-2") %>
+        <%= text_field_tag(:q, params[:q], placeholder:"Suche nach Elementen", class: "form-control mr-sm-2") %>
         <%= submit_tag("Suche", class: "btn btn-outline-success my-2 my-sm-0", name:nil) %>
       <% end %>
 
