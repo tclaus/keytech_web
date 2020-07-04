@@ -16,7 +16,7 @@ class EngineController < ApplicationController
   end
 
   def delete_note
-    puts "Delete Note! #{params[:id]}"
+    logger.info "Delete Note! #{params[:id]}"
     note = keytech_note_handler.create('', params[:element_key])
     note.id = params[:id]
     keytech_note_handler.remove(note)
@@ -188,6 +188,7 @@ class EngineController < ApplicationController
   end
 
   def checkserver
+    # TODO: Check oly of logged in
     server_check_result = current_user.connection_valid?
     render json: { available: server_check_result }
   end

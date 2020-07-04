@@ -44,12 +44,16 @@ gem 'turbolinks', '~> 5.2.0'
 gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
+
+# Use Queue backend
+gem 'resque'
+gem 'rufus-scheduler'
+
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
 gem 'keytechkit', '~> 1.1' # , :path => '/Users/thorstenclaus/Documents/develop/web-projekte/keytechKit.gem'
 
-gem 'resque'
 
 # User Auth
 gem 'devise'

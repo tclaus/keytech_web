@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+require 'resque/server'
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'application#home'
@@ -16,9 +18,13 @@ Rails.application.routes.draw do
     put 'set_keytech_demo_server' => :set_keytech_demo_server
   end
 
- controller :classes do
-   get 'class_list' => :class_list
- end
+  authenticate :user do
+    mount Resque::Server, at: '/jobs'
+  end
+
+  controller :classes do
+    get 'class_list' => :class_list
+  end
 
   get 'dashboard', to: 'application#dashboard'
 
